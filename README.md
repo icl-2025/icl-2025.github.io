@@ -22,6 +22,14 @@ concepts presented during lectures.
 In order to install OCaml and the language ecosystem, please follow
 the installation guide provided [here](install_ocaml).
 
+During the ICL course I will also provide Java implementations of the
+majority of the exercises, as well as the project skeleton. However, I
+strongly recommend, and believe me it is of your best interest, to use
+OCaml as a vehicle to learn about compilers design. OCaml (and overall
+functional programming languages) is a perfect choice to design and
+implement compilers. Java, on the other hand, it is not a good choice
+to do so.
+
 ## Planning
 
 | Week | Date | Topics | Slides | Labs |
