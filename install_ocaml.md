@@ -138,3 +138,319 @@ Finally, proceed to install some useful packages:
 ```console
 sudo apt install -y zip unzip build-essential
 ```
+
+## OPAM Installation
+
+**Linux.** Follow the [instructions][opam-install] for the
+distribution you are using.
+
+**Mac.** If you are using Homebrew, run the following command:
+
+```console
+brew install opam
+```
+
+If you are using MacPorts, run the following command:
+
+```console
+sudo port install opam
+```
+
+[opam-install]: https://opam.ocaml.org/doc/Install.html
+
+**Windows.** Run the following command from Ubuntu:
+
+```console
+sudo apt install opam
+```
+
+## OPAM Initialization
+
+> [!WARNING]
+> You should never use OPAM in super user mode. In other
+> words, do not use the `sudo` prefix with any `opam` command.
+
+**Linux, Mac, and Windows (WSL).** Run:
+
+```console
+opam init --bare -a -y
+```
+
+(It is normal to get a warning about the `.profile` file not being
+correctly referenced in the `.bashrc` file. You don't need to make any
+intervention at this point.)
+
+## Create an OPAM *Switch*
+
+> [!WARNING]
+> Even if you may have already installed OPAM and created
+> some *switch*, for the purpose of the **Programming Languages and
+> Environments** course, you should create a new *switch* from
+> scratch. In general, it is good practice when using OPAM to create
+> new *switches* to modularize projects or development environments
+> with very specific purposes.
+
+A *switch* is the OPAM unit that allows you to name a specific
+installation of an OCaml compiler version and a set of associated
+software packages. You can have several switches created, each
+presenting a specific compiler version, or a set of packages for a
+very specific purpose (for example, a personal project you are working
+on). You can freely alternate (*switch*, hence the name) between the
+different switches you have created on your machine.
+
+To create a switch for **ICL**, you should run the following command:
+
+```console
+opam switch create icl2025 ocaml-base-compiler.4.14.0
+```
+
+This command will create a switch with the name *icl2025* whose
+underlying version of the OCaml compiler is 4.14.0.
+
+> [!TIP]
+> If the previous command fails with the error that version
+> 4.14.0 is not available, then you probably installed an old version
+> of OPAM. Update OPAM with the command `opam update`.
+
+Next, you will be asked to run the following command:
+
+```console
+eval $(opam env)
+```
+
+You can do this, but the most important thing at this point is to log
+out of your Operating System session (or simply restart the
+machine). Open the terminal again and run the following command:
+
+```console
+opam switch list
+```
+
+The result should look like this:
+
+```console
+#     switch                         compiler                       description
+->    icl2025                        ocaml-base-compiler.4.14.0     icl2025
+```
+
+It may contain other lines if you have done OCaml development
+before. You should pay particular attention to the following points:
+
+- You should **not** get the warning "The environment is not in sync
+  with the current switch. You should run `eval $(opam env)`". Below
+  we indicate how to resolve this problem.
+
+- The arrow `->` should be displayed in the first column to the left
+  of the `icl2025` switch.
+
+- The switch should display the correct name, as well as version
+  4.14.0 of the compiler.
+
+> [!WARNING]
+> If the previous step asks you to run the command `eval
+> $(opam env)`, then something went wrong in the OPAM initialization
+> step (command `opam init`). You can try running `opam init --reinit`
+> to resolve the issue. Moreover, it is really necessary to complete
+> the step of logging out of the Operating System session, or simply
+> restarting the machine.
+
+To install the OPAM packages we need for ICL, you should run the
+following command:
+
+```console
+opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocamlformat
+```
+
+The entire line above should be entered in the console, so you should
+make sure to copy it in its entirety. You will likely be presented
+with some *output* about text editor configuration. You can ignore
+these indications.
+
+At this point, you are already in a position to launch the `utop`
+program, the *OCaml Universal Toplevel*:
+
+```console
+utop
+```
+
+As a very basic first experience, enter the number `42` followed by
+the symbols `;;` (two semicolons). Then, press the `Enter` key. You
+should get the following result:
+
+```ocaml
+# 42;;
+- : int = 42
+```
+
+The `#` symbol indicates the prompt (*i.e.,* where to write) in
+`utop`. After this simple experiment, exit `utop` by entering the
+following command:
+
+```ocaml
+# #quit;;
+```
+
+Note the `#` symbol next to the word `quit`. You can also choose to
+use the `Ctrl+D` combination.
+
+## Visual Studio Code
+
+As a vehicle for editing OCaml code for ICL, we recommend using
+**Visual Studio Code** (VS Code).
+
+> [!IMPORTANT]
+> Despite the use of VS Code, there are several other
+> editors that are excellent choices when it comes to editing OCaml
+> code. Of these, we highlight `emacs` and `vim` as the most classic
+> and even more widely used in industrial and academic environments
+> for OCaml development. However, any of these editors presents a
+> learning curve that may be discouraged for beginners. On the other
+> hand, **we strongly discourage** editing OCaml in Eclipse. The available
+> plugin is not actively maintained and only works with old versions
+> of the OCaml compiler.
+
+First, you should download and then install [VS Code][vscode]. After
+launching VS Code, you should open the extensions panel, using one of
+the following options:
+
+- Use the menu "View $\rightarrow$ Extensions";
+
+- Click on the extensions icon in the bar on the left. This icon looks
+  like four small squares.
+
+> [!TIP]
+> At various times you will need to use the *Command
+> Palette*. To do this, navigate through the menu View $\rightarrow$ Command
+> Palette. You can also use the keyboard shortcut combination, which
+> you should find next to the words "Command Palette" in the `View`
+> menu.
+
+Next, follow these instructions if you are using Windows or Mac:
+
+- **Windows:** install the "WSL" extension.
+
+- **Mac:** open the *Command Palette* and type `shell command` to find
+  the command "Shell Command: Install 'code' command in PATH". Run
+  this command.
+
+Third, regardless of the Operating System used, close any open
+terminal (or simply log out or restart the machine) so that the new
+configurations take effect. This will allow, later, launching VS Code
+from a terminal.
+
+Fourth, and **only for Windows users**, open the *Command Palette* and
+run the command `WSL: Connect to WSL`. This command will install
+additional software. As soon as the command execution finishes, you
+should observe an indicator with the message "WSL: Ubuntu" at the
+bottom left of the VS Code window. If you only observe an icon with
+the appearance <sub>&gt;</sub><sup>&lt;</sup> click on this and choose
+"Connect to WSL" from the *Command Palette* that appears.
+
+Fifth, open the VS Code extensions panel again. Search for and install
+the **"OCaml Platform"** extension, developed by **OCaml Labs**. Do
+not install any other extension, even if it refers to the OCaml
+language.
+
+> [!WARNING]
+> If, after installing the "OCaml Platform" extension, you
+> observe an error regarding the lack of the `ocaml-lsp-server`
+> package, then something went wrong in the installation of this
+> package through OPAM. Check that you indeed installed this package
+> via the `opam install` command, as mentioned in the "Create an OPAM
+> *Switch*" section.
+
+[vscode]: https://code.visualstudio.com/
+
+## Verify VS Code Installation
+
+This section presents a series of checks that we can perform to ensure
+that the installation of VS Code and the OCaml extension were
+successful.
+
+- Restart the machine one more time
+
+> [!TIP]
+> In reality, in a Unix development system, we don't really
+> need to restart the machine so many times for the effects of
+> software installation to take place. However, this step has the
+> potential to detect various sources of error early and therefore
+> deserves the extra effort.
+
+- Open a new Unix console. In **Windows:** this is the Ubuntu console
+  within the WSL system, not PowerShell or Cmd.
+
+- Navigate to a directory of your choice, preferably a subdirectory of
+  your HOME folder. To create a `icl2025` subdirectory, where you can
+  store all the development done in this course, you can use the
+  following commands:
+
+  ```console
+  mkdir ~/icl2025
+  cd ~/icl2025
+  ```
+
+In this directory, launch VS Code, using the following command:
+
+  ```console
+  code .
+  ```
+
+Navigate through the menu File $\rightarrow$ New File. Save the file with
+the name `test.ml`. At this moment, in VS Code, an orange icon with a
+white camel should appear.
+
+- Write the following piece of OCaml code, followed by the `Enter`
+  key:
+
+  ```ocaml
+  let x : int = 42
+  ```
+
+Even while writing the code, VS Code should automatically highlight
+the syntax, suggest ways to complete the code, as well as add a small
+icon above the line. Try changing the word `int` to `string`. A small
+wavy line should appear below `42`. You can use the mouse to check the
+associated error message. You can also use the menu "View $\rightarrow$
+Problems" to check this same error. Now, put quotation marks around
+`42` to convert this integer to a string. The error should now
+disappear.
+
+**If you could not observe this behavior,** there is some problem with
+your installation. You can try one of the following options:
+
+- In the same console you used to launch VS Code, check that you can
+  complete the verification instructions for the OPAM switch
+  installation. Can you launch `utop`? Is the correct switch the one
+  that is active? If none of these situations are verified, then this
+  is exactly the problem you need to solve.
+
+- If you are in WSL and VS Code only presents syntax coloring and you
+  observe the error about "Sandbox initialization failed", then check
+  that the "WSL" indicator is visible at the bottom left of the VS
+  Code window. If not, check that you did install the "WSL" extension
+  described earlier and that you are indeed running VS Code from
+  Ubuntu and never from PowerShell or the Windows interface. Also
+  check that the "OCaml Platform" extension is correctly installed.
+
+## OCaml Editing Configuration in VS Code
+
+Following good code presentation practices, we recommend changing some
+of the default settings in the VS Code editor. Start by opening the
+JSON file by navigating through the menu "View $\rightarrow$ Command
+Palette". Then, type "user setting json". Finally, select `Open User
+Settings (JSON)`. Below we present the recommended settings for ICL,
+which we suggest you paste in the window presented:
+
+```json
+{
+    "editor.tabSize": 2,
+    "editor.rulers": [ 80 ],
+    "editor.formatOnSave": true
+}
+```
+
+With the configuration presented, all OCaml code lines that we will
+write throughout the course will never have more than 80
+characters. We thus obey the famous [**80 columns**][columns] rule.
+
+[columns]: https://medium.com/@carlo.michaelis/the-80-120-column-soft-margin-rule-979526742197
