@@ -6,29 +6,26 @@ Please inform before (by email) that you plan to attend office hours.
 
 | Instructor | Schedule | E-mail |
 | ---------- | -------- | ------ |
-| Mário Pereira | Wednesday, 14h30 (Office 243) | mjp.pereira@fct.unl.pt |
+| Mário Pereira | Wednesday, 14h00 (Office 243) | mjp.pereira@fct.unl.pt |
 | ---------- | -------- | ------ |
+
+## Installation procedures
+
+### The OCaml language and ecosystem
+
+The OCaml language is our tool of choice for the most part of the ICL
+course. We are going to use OCaml during lectures, to present
+fundamental concepts about languages and compilers, as well as in
+practical sessions to implement and experiment with some of the main
+concepts presented during lectures.
+
+In order to install OCaml and the language ecosystem, please follow
+the instructions
 
 ## Planning
 
 | Week | Date | Topics | Slides | Labs |
 | ---- | ---- | ------ | ------ | ---- |
-| 1    | 16 Sep | Verified Functional Programs: introduction  |        |      |
-| 1    | 16, 19 Sep | Introduction to the Coq Proof Assistant |        |      |
+| 1    | 11 Mar | Introduction to the ICL course and the OCaml language  |        |      |
+| 1    | 11 Mar | Exercises using the OCaml language |        |      |
 | ---- | ---- | ------ | ------ | ---- |
-
-## Installation procedures
-
-### The Coq proof assistant
-
-The Coq proof assistant is going to be our tool of choice for the
-first part of the CVS course.
-
-In order to install Coq, I advise you to use the *Coq Platform*. The
-platform main repository and documentation is
-[here](https://github.com/coq/platform). There, you will found
-instructions on how to install Coq under Linux, Windows, or Mac.
-
-Regarding editors, Coq comes with its own IDE. This is installed with
-the Coq Platform. There are also very smooth integration of the proof
-assistant with common text editors, such as VS Code.
