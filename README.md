@@ -20,7 +20,7 @@ practical sessions to implement and experiment with some of the main
 concepts presented during lectures.
 
 In order to install OCaml and the language ecosystem, please follow
-the instructions
+the installation guide provided here
 
 ## Planning
 
