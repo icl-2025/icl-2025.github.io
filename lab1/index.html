@@ -21,9 +21,18 @@ pre {
 
 The goal of this lab is to ...
 
-<h2>Copying a file</h2>
+<h2 id="copying-a-file">Copying a file</h2>
 
 <a href="copy_file.tar.gz">copy_file.tar.gz</a>
+
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">open_in</span> : <span class="dt">string</span> -&gt; <span class="dt">in_channel</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">open_out</span> : <span class="dt">string</span> -&gt; <span class="dt">out_channel</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">input_char</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">char</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">output_char</span> : <span class="dt">char</span> -&gt; <span class="dt">out_channel</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
 
 <h2>Reversing the order of lines in a text</h2>
 
