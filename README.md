@@ -35,5 +35,5 @@ to do so.
 | Week | Date | Topics | Slides | Labs |
 | ---- | ---- | ------ | ------ | ---- |
 | 1    | 11 Mar | Introduction to the ICL course and the OCaml language  |        |      |
-| 1    | 11 Mar | Exercises using the OCaml language |        |      |
+| 1    | 11 Mar | Exercises using the OCaml language |        |  [Lab 1](lab1)    |
 | ---- | ---- | ------ | ------ | ---- |
