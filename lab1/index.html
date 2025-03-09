@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="../style.css">
 <title>
 ICL 2025 - LAB 1 - OCaml Introduction/Refreshment</title>
@@ -17,30 +17,79 @@ pre {
 
 <body>
 
-<h1>ICL 2025 - LAB 1 - OCaml Introduction/Refreshment</h1>
-
-The goal of this lab is to ...
-
+<h1 id="icl-2025---lab-1---ocaml-refreshment">ICL 2025 - LAB 1 - OCaml
+Refreshment</h1>
+<p>The goal of this lab is to serve as a refreshment to the OCaml
+language.</p>
+<p>Through small programming exercises, you are supposed to get familiar
+with the OCaml syntax, compiler, and, most of all, the programming
+style. Each exercise is supposed to illustrate/exercise some specific
+features of the OCaml language that are of interest for the upcoming
+compilers lab sessions and project.</p>
+<p>For each exercise, you are supposed to download a tarball file named
+<code>XXX.tar.gz</code>. After downloading, you should uncompress it
+using <code>tar zxvf XXX.tar.gz</code>, which creates a directory named
+<code>XXX</code>. In that directory, you shall find the main file named
+<code>XXX.ml</code>, together with a <code>dune</code> file. In order to
+compile the exercise, you should run <code>dune build</code> and then
+<code>dune exec ./XXX.exe</code> to execute your implementation.</p>
 <h2 id="copying-a-file">Copying a file</h2>
-
-<a href="copy_file.tar.gz">copy_file.tar.gz</a>
-
+<p>This exercise proposes you to write a simple program that reads the
+name of two files from the standard input, <code>f1</code> and
+<code>f2</code>, and then copies the contents of <code>f1</code> into
+<code>f2</code>. The skeleton can be downloaded here: <a
+href="copy_file.tar.gz">copy_file.tar.gz</a>.</p>
+<p>Your goal is to complete the definition of function
+<code>copy</code>, which has the following type:</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">open_in</span> : <span class="dt">string</span> -&gt; <span class="dt">in_channel</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">open_out</span> : <span class="dt">string</span> -&gt; <span class="dt">out_channel</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">input_char</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">char</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">output_char</span> : <span class="dt">char</span> -&gt; <span class="dt">out_channel</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> copy : <span class="dt">string</span> -&gt; <span class="dt">string</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
+<p>The first argument of type <code>string</code> is the name of input
+file, let’s call it <code>f1</code>, while the second argument is the
+name of the output file, let’s call it <code>f2</code>. The return value
+is of type <code>unit</code>, indicating that this function does not
+return any value, simply because all it does is to output something into
+a file.</p>
+<p>Function <code>copy</code> should first open the two files, one for
+input the other for output, using the following standard library
+functions:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">open_in</span> : <span class="dt">string</span> -&gt; <span class="dt">in_channel</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">open_out</span> : <span class="dt">string</span> -&gt; <span class="dt">out_channel</span></span></code></pre></div>
+<p>Then, the main job of <code>copy</code> is to implement a loop that
+reads the contents of <code>f1</code> and writes it to <code>f2</code>.
+For such, you can use either the functions</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">input_char</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">char</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">output_char</span> : <span class="dt">out_channel</span> -&gt; <span class="dt">char</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
+<p>which, respectively, read a character from an input channel and
+writes a character into a output channel, or you can use</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">input_line</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">string</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">output_string</span> : <span class="dt">out_channel</span> -&gt; <span class="dt">string</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
+<p>where <code>input_line</code> reads the contents of an input channel
+line by line and <code>output_string</code> writes a string into an
+output channel.</p>
+<p>To write the main <em>fetch-and-write</em> loop, you should write a
+recursive function <code>loop ()</code>, whose body is a block of the
+form</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">try</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">with</span> <span class="dt">End_of_file</span> -&gt;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ...</span></code></pre></div>
+<p>where the <code>End_of_file</code> exception, from the standard
+library, is raised whenever we reach the end of file <code>f1</code>.
+Upon completion, <em>i.e.</em>, after reading the whole contents of
+<code>f1</code> into <code>f2</code>, you should close both channels
+using the following functions:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">close_in</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">unit</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">close_out</span> : <span class="dt">out_channel</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
 
-<h2>Reversing the order of lines in a text</h2>
-
-<a href="reverse_text.tar.gz">reverse_text.tar.gz</a>
-
-<h2>Quad trees</h2>
-
-<h2>Reading a musical score from a file</h2>
 
 <div style="text-align:right">
 <a href="">solution</a>
