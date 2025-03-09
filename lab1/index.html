@@ -17,7 +17,7 @@ pre {
 
 <body>
 
-<h1 id="icl-2025---lab-1---ocaml-refreshment">ICL 2025 - LAB 1 - OCaml
+  <h1 id="icl-2025---lab-1---ocaml-refreshment">ICL 2025 - LAB 1 - OCaml
 Refreshment</h1>
 <p>The goal of this lab is to serve as a refreshment to the OCaml
 language.</p>
@@ -33,11 +33,11 @@ using <code>tar zxvf XXX.tar.gz</code>, which creates a directory named
 <code>XXX.ml</code>, together with a <code>dune</code> file. In order to
 compile the exercise, you should run <code>dune build</code> and then
 <code>dune exec ./XXX.exe</code> to execute your implementation.</p>
-<h2 id="copying-a-file">Copying a file</h2>
+<h2 id="exercise-1-copying-a-file">Exercise 1: Copying a file</h2>
 <p>This exercise proposes you to write a simple program that reads the
 name of two files from the standard input, <code>f1</code> and
 <code>f2</code>, and then copies the contents of <code>f1</code> into
-<code>f2</code>. The skeleton can be downloaded here: <a
+<code>f2</code>. The skeleton implementation can be downloaded here: <a
 href="copy_file.tar.gz">copy_file.tar.gz</a>.</p>
 <p>Your goal is to complete the definition of function
 <code>copy</code>, which has the following type:</p>
@@ -89,7 +89,162 @@ using the following functions:</p>
 class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">close_in</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">unit</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">close_out</span> : <span class="dt">out_channel</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
-
+<h2 id="exercise-2-reversing-the-order-of-lines-in-a-text">Exercise 2:
+Reversing the order of lines in a text</h2>
+<p>This exercise proposes you to write a simple program that reads some
+lines of text from the standard input and prints them on standard
+output, but in reverse order. The skeleton implementation can be
+downloaded here: <a
+href="reverse_text.tar.gz">reverse_text.tar.gz</a>.</p>
+<p>Your goal is to complete the definition of variable
+<code>lines</code> and function <code>print</code>, which have the
+following types:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> lines : <span class="dt">string</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> print : <span class="dt">string</span> <span class="dt">list</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
+<p>In OCaml, one can write arbitrary code, even within the definition of
+a global value like <code>lines</code>. In particular, you should
+complete the definition of the <code>loop</code> function to read the
+contents of standard input until the <code>Ctrl + D</code> combination
+is issued to signal the end of input. You should read the text line by
+line using the following function:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">read_line</span> : <span class="dt">unit</span> -&gt; <span class="dt">string</span></span></code></pre></div>
+<p>The <code>text</code> local reference serves as accumulator for what
+you read from standard input, which you should update using OCaml
+references assignment. The following are the most useful functions when
+it comes to reference manipulation:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">ref</span> : &#39;a -&gt; &#39;a <span class="dt">ref</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">(** </span><span class="ot">[</span><span class="dt">ref</span> v<span class="ot">]</span><span class="co"> creates a reference with contents </span><span class="ot">[</span>v<span class="ot">]</span><span class="co"> *)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> (!) : &#39;a <span class="dt">ref</span> -&gt; &#39;a</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">(** </span><span class="ot">[</span>!r<span class="ot">]</span><span class="co"> returns the contents of reference </span><span class="ot">[</span>r<span class="ot">]</span><span class="co"> *)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> (:=) : &#39;a <span class="dt">ref</span> -&gt; &#39;a -&gt; <span class="dt">unit</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">(** </span><span class="ot">[</span>r := v<span class="ot">]</span><span class="co"> updates the contents of reference </span><span class="ot">[</span>r<span class="ot">]</span><span class="co"> with value </span><span class="ot">[</span>v<span class="ot">]</span><span class="co"> *)</span></span></code></pre></div>
+<p>Finally, the <code>print</code> is a recursive function that
+traverses its argument <code>l</code>, of type <code>string list</code>,
+and prints the string on each list element into the standard output. For
+printing, use the following function:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">print_endline</span> : <span class="dt">string</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
+<h2 id="exercise-3-quad-trees">Exercise 3: Quad trees</h2>
+<p>In this exercise, you are asked to implement a small library of
+<em>Quad</em> trees. Quad trees are a simple data structure that allows
+one to encode and manipulate black-and-white square images of size
+<!-- --> <span
+class="math inline">2<sup><em>n</em></sup> × 2<sup><em>n</em></sup></span>.
+If an image is completely black or white, it is represented using a
+constant denoting its color. Otherwise, it is decomposed into four
+subimages, each of size <span
+class="math inline">2<sup><em>n</em> − 1</sup> × 2<sup><em>n</em> − 1</sup></span>,
+according to the following order:</p>
+<p><img src="quad_order.png" /></p>
+<p>A image is, thus, the union of the four sub-images. In our program,
+the following type <code>quad</code> corresponds to this
+representation:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">type</span> quad = White | Black | Node <span class="kw">of</span> quad * quad * quad * quad</span></code></pre></div>
+<p>The constants <code>White</code> and <code>Black</code> respectively
+denote an image that is either completely white or completely black. The
+constructor <code>Node</code> corresponds to an image decomposed into
+four sub-images, which are the four arguments of this constructor.</p>
+<p>The following image</p>
+<p><img src="quad_example.png" /></p>
+<p>is represented by the following value of type <code>quad</code>:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Node (Node (Black, Black, Black, White),</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>      Black,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>      Node (Black, Black, Black, White),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      White)</span></code></pre></div>
+<p>The following asks you to implement some functions that manipulate
+and/or build quad trees. To help you test your solutions, a
+<code>draw</code> function is provided, which has the following
+type:</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> draw : <span class="dt">int</span> -&gt; <span class="dt">int</span> -&gt; <span class="dt">int</span> -&gt; quad -&gt; <span class="dt">unit</span></span></code></pre></div>
+<p>A call <code>draw x y w q</code> draws the quad tree <code>q</code>
+in a graphical window with the position <code>(x, y)</code> being the
+bottom-left corner of the image, and <code>w</code> the side length of
+the square.</p>
+<h3 id="question-3.1-build-a-checkerboard">Question 3.1: build a
+checkerboard</h3>
+<p>Complete the definition of function <code>checker_board</code> with
+the following type:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> checker_board : <span class="dt">int</span> -&gt; quad</span></code></pre></div>
+<p>Function <code>checker_board</code> takes as input an integer value
+<span class="math inline"><em>n</em></span> and builds a quad tree that
+represents a <span
+class="math inline">2<sup><em>n</em></sup> × 2<sup><em>n</em></sup></span>
+checkerboard. As an example, the return value of
+<code>checker_board 3</code> corresponds to the following image:</p>
+<p><img src="quad_checker_board.png" /></p>
+<p>To implement <code>checker_board</code>, we proceed by recursion on
+the value of <span class="math inline"><em>n</em></span>, as
+follows:</p>
+<ol type="1">
+<li>If <span class="math inline"><em>n</em> = 0</span>, we make an
+arbitrary choice and an return a black square.</li>
+<li>If <span class="math inline"><em>n</em> = 1</span>, we return a
+checkerboard of size <span class="math inline">2 × 2</span>.</li>
+<li>Finally, if <span class="math inline"><em>n</em> &gt; 1</span>, we
+construct a <span
+class="math inline">2<sup><em>n</em> − 1</sup> × 2<sup><em>n</em> − 1</sup></span>
+checkerboard that we use four times over to construct a checkerboard of
+size <span
+class="math inline">2<sup><em>n</em></sup> × 2<sup><em>n</em></sup></span>.</li>
+</ol>
+<h3 id="question-3.2-rotate-an-image">Question 3.2: rotate an image</h3>
+<p>Complete the definition of function <code>rotate</code> with the
+following type:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> rotate : quad -&gt; quad</span></code></pre></div>
+<p>This function turns an image anticlockwise by 90 degrees.</p>
+<h3 id="question-3.3-mirror-of-an-image">Question 3.3: mirror of an
+image</h3>
+<p>Complete the definition of function <code>mirror</code> with the
+following type:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> mirror : quad -&gt; quad</span></code></pre></div>
+<p>This function constructs the mirror symmetry along the vertical axis
+of an image represented by a quad tree. Thus, the function mirror allows
+switching between the following two images:</p>
+<p><img src="quad_mirror.png" /></p>
+<h3 id="question-3.4-from-a-quad-tree-to-a-string">[**] Question 3.4:
+from a quad tree to a string</h3>
+<p>Complete the definition of function <code>parse</code> with the
+following type:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> unparse : quad -&gt; <span class="dt">string</span></span></code></pre></div>
+<p>This function builds a binary representation of a quad tree, encoded
+as a string. For instance, the following image</p>
+<p><img src="quad_simple.png" /></p>
+<p>should be converted into the string <code>0101</code>.</p>
+<h3 id="question-3.5-from-string-to-a-quad-tree">[***] Question 3.5:
+from string to a quad tree</h3>
+<p>Complete the definition of function <code>parse</code> with the
+following type:</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> parse : <span class="dt">string</span> -&gt; quad</span></code></pre></div>
+<p>This function constructs a quad tree from a binary representation of
+an image, encoded as a string. It is the dual of the above
+<code>unparse</code> function.</p>
+<h3 id="bonus-question-invariants">Bonus Question: invariants</h3>
+<p>One may wish to guarantee the property that a quad tree is never made
+up of four leaves of the same color, since that would be an
+unnecessarily complicated representation. To enforce this invariant, as
+an alternative to the constructor <code>Node</code>, we must then
+provide a function <code>node</code>, defined so as to guarantee the
+invariant. This function as the following type:</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> node : (quad, quad, quad, quad) -&gt; quad</span></code></pre></div>
+<p>If all elements in the tuple are of the same color <code>c</code>, it
+should just return <code>c</code>. Otherwise, return a value using the
+constructor <code>Node</code> and the four sub-quad trees given as
+arguments.</p>
 
 <div style="text-align:right">
 <a href="">solution</a>
