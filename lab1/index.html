@@ -1,24 +1,100 @@
-<html>
-
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="../style.css">
-<title>
-ICL 2025 - LAB 1 - OCaml Introduction/Refreshment</title>
-<style>
-tt {
-        color:blue;
-}
-pre {
-        color:blue;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="" />
+  <title>ICL 2025 - LAB 1 - OCaml Refreshment</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../style.css" />
 </head>
-
 <body>
-
-<h1 id="icl-2025---lab-1---ocaml-refreshment">ICL 2025 - LAB 1 - OCaml
-Refreshment</h1>
+<header id="title-block-header">
+<h1 class="title">ICL 2025 - LAB 1 - OCaml Refreshment</h1>
+<p class="author"></p>
+</header>
 <p>The goal of this lab is to serve as a refreshment to the OCaml
 language.</p>
 <p>Through small programming exercises, you are supposed to get familiar
@@ -33,6 +109,10 @@ using <code>tar zxvf XXX.tar.gz</code>, which creates a directory named
 <code>XXX.ml</code>, together with a <code>dune</code> file. In order to
 compile the exercise, you should run <code>dune build</code> and then
 <code>dune exec ./XXX.exe</code> to execute your implementation.</p>
+<p>For each exercise, you are asked to complete the definition of some
+functions or variables. These are marked in the source code with
+<code>assert false (* TODO *)</code>. Of course, you are free (and
+encouraged) to write auxiliary functions whenever you find suitable.</p>
 <h2 id="exercise-1-copying-a-file">Exercise 1: Copying a file</h2>
 <p>This exercise proposes you to write a simple program that reads the
 name of two files from the standard input, <code>f1</code> and
@@ -135,7 +215,7 @@ class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb10-1"><a hre
 <em>Quad</em> trees. The skeleton implementation can be downloaded here:
 <a href="quad.tar.gz">quad.tar.gz</a>.</p>
 <p>Quad trees are a simple data structure that allows one to encode and
-manipulate black-and-white square images of size <!-- --> <span
+manipulate black-and-white square images of size <span
 class="math inline">2<sup><em>n</em></sup> × 2<sup><em>n</em></sup></span>.
 If an image is completely black or white, it is represented using a
 constant denoting its color. Otherwise, it is decomposed into four
@@ -246,20 +326,80 @@ class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb19-1"><a hre
 should just return <code>c</code>. Otherwise, return a value using the
 constructor <code>Node</code> and the four sub-quad trees given as
 arguments.</p>
+<h2 id="exercise-4-reading-a-musical-score-from-a-file">Exercise 4:
+reading a musical score from a file</h2>
+<p>In this exercise, your goal is to extend the lecture demo program to
+play a musical score read from a file. You should complete the
+definition of function <code>file</code>, with the following type:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> file : <span class="dt">string</span> -&gt; score</span></code></pre></div>
+<p>The argument of type <code>string</code> stands for the file name
+from which you should read the musical score.</p>
+<p>A file description of a musical score shall specify the tempo of play
+and a list of symbols. For simplicity, let us consider that symbols can
+only be musical notes and not silences. Hence, we propose the following
+grammar for a musical score file:</p>
+<pre><code> f ::= &quot;TEMPO&quot; : N&#39;\n&#39;
+       (s : O d)+
 
-<div style="text-align:right">
-<a href="">solution</a>
-</div>
+ s ::= &quot;Do&quot;  | &quot;Re&quot; | &quot;Mi&quot; | &quot;Fa&quot;
+     | &quot;Sol&quot; | &quot;La&quot; | &quot;Si&quot;
 
-<hr>
-
-<font size="-1"><a href="../index.html">back to the main page</a></font>
-
+ d ::= &quot;Six&quot; | &quot;Eighth&quot; | &quot;Quarter&quot; | &quot;Half&quot; | &quot;Full&quot;</code></pre>
+<p>The first line of the file contains the string <strong>TEMPO</strong>
+followed by character ‘:’ and then and integer value, which represents
+the tempo of the score. Then, the remaining of the file is a list of
+notes. Each line begins by the name of the note (rule <code>s</code> in
+the grammar above), followed by ‘:’, the value of the octave
+(<code>O</code>, an integer value), and finally the duration (rule
+<code>d</code> above).</p>
+<p>In our implementation, we are expected to read the contents of a file
+following the above grammar, until the <code>End_of_file</code>
+exception is raised. After this first step, you need to parse the
+textual contents you just read. You are, thus, supposed to separate the
+different components of each line according to its semantics. To split a
+line based on some character, use the following function:</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> split_on_char : <span class="dt">char</span> -&gt; <span class="dt">string</span> -&gt; <span class="dt">string</span> <span class="dt">list</span></span></code></pre></div>
+<p>This function is defined in the <code>String</code> module from the
+OCaml standard library. You can use by doing
+<code>String.split_on_char</code>.</p>
+<p>To avoid trailing white spaces, use the function</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> trim : <span class="dt">string</span> -&gt; <span class="dt">string</span></span></code></pre></div>
+<p>also from the <code>String</code> module.</p>
+<p>We recommend you to first implement a fully-working solution that
+assumes the file to be syntactically well-formed, <em>i.e.</em>, it
+obeys the given grammar. Afterwards, try to refine your implementation
+to include some error signaling. For instance, to signal that the first
+line of the file is not of the form <code>"TEMPO" : N</code>, or that a
+name of a note is not in the list <code>Do ... Si</code>. For each kind
+of error, exit your program with a different error code. To do so, use
+the following function:</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">exit</span> : <span class="dt">int</span> -&gt; &#39;a</span></code></pre></div>
+<p>where the argument of type <code>int</code> is the exit error
+code.</p>
+<p>Before exiting, it might be interesting to produce an error message.
+You can proceed in two ways: either print a message on the standard
+error before exiting, or raise an exception to be caught in the main
+function that executes your program.</p>
+<p>A new exception in OCaml is easily defined in OCaml as follows:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">exception</span> Syntax_error</span></code></pre></div>
+<p>You can raise as follows:</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">raise</span> Syntax_error</span></code></pre></div>
+<p>For each kind of exceptions, an error message is expected to be
+produced on the standard error file. To do so, use the following
+function:</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> eprintf : (&#39;a, <span class="dt">Format</span>.formatter, <span class="dt">unit</span>) <span class="dt">format</span> -&gt; &#39;a</span></code></pre></div>
+<p>The type of this function is certainly not very nice. But worry not,
+its usage is quite easy in fact. This is as simple as follows:</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">Format</span>.eprintf <span class="st">&quot;Syntax error@.&quot;</span></span></code></pre></div>
+<p>where the <code>@.</code> sign is used to flush the standard error
+and print the newline character.</p>
 </body>
 </html>
-
-<!--
-Local Variables:
-ispell-local-dictionary: "american"
-End:
--->
