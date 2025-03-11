@@ -143,8 +143,8 @@ For such, you can use either the functions</p>
 class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">input_char</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">char</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">output_char</span> : <span class="dt">out_channel</span> -&gt; <span class="dt">char</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
-<p>which, respectively, read a character from an input channel and
-writes a character into a output channel, or you can use</p>
+<p>which, respectively, reads a character from an input channel and
+writes a character into an output channel, or you can use</p>
 <div class="sourceCode" id="cb4"><pre
 class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">input_line</span> : <span class="dt">in_channel</span> -&gt; <span class="dt">string</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -212,9 +212,9 @@ class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb10-1"><a hre
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> (:=) : &#39;a <span class="dt">ref</span> -&gt; &#39;a -&gt; <span class="dt">unit</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">(** </span><span class="ot">[</span>r := v<span class="ot">]</span><span class="co"> updates the contents of reference </span><span class="ot">[</span>r<span class="ot">]</span><span class="co"> with value </span><span class="ot">[</span>v<span class="ot">]</span><span class="co"> *)</span></span></code></pre></div>
-<p>Finally, the <code>print</code> is a recursive function that
-traverses its argument <code>l</code>, of type <code>string list</code>,
-and prints the string on each list element into the standard output. For
+<p>Finally, <code>print</code> is a recursive function that traverses
+its argument <code>l</code>, of type <code>string list</code>, and
+prints the string on each list element into the standard output. For
 printing, use the following function:</p>
 <div class="sourceCode" id="cb11"><pre
 class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> <span class="dt">print_endline</span> : <span class="dt">string</span> -&gt; <span class="dt">unit</span></span></code></pre></div>
@@ -238,7 +238,7 @@ subimages, each of size <span
 class="math inline">2<sup><em>n</em> − 1</sup> × 2<sup><em>n</em> − 1</sup></span>,
 according to the following order:</p>
 <p><img src="quad_order.png" /></p>
-<p>A image is, thus, the union of the four sub-images. In our program,
+<p>An image is, thus, the union of the four sub-images. In our program,
 the following type <code>quad</code> corresponds to this
 representation:</p>
 <div class="sourceCode" id="cb13"><pre
@@ -283,7 +283,7 @@ the value of <span class="math inline"><em>n</em></span>, as
 follows:</p>
 <ol type="1">
 <li>If <span class="math inline"><em>n</em> = 0</span>, we make an
-arbitrary choice and an return a black square.</li>
+arbitrary choice and return a black square.</li>
 <li>If <span class="math inline"><em>n</em> = 1</span>, we return a
 checkerboard of size <span class="math inline">2 × 2</span>.</li>
 <li>Finally, if <span class="math inline"><em>n</em> &gt; 1</span>, we
@@ -332,7 +332,7 @@ an image, encoded as a string. It is the dual of the above
 quad tree is always a string of size <span
 class="math inline">2<sup><em>n</em></sup></span>, for some <span
 class="math inline"><em>n</em></span>. In order to recursively build the
-four sub-images, you can start by splinting the initial string into two
+four sub-images, you can start by spliting the initial string into two
 sub-strings of length <span
 class="math inline">2<sup><em>n</em> − 1</sup></span>, and then each
 such sub-string into sub-strings of length <span
@@ -395,8 +395,8 @@ notes. Each line begins by the name of the note (rule <code>s</code> in
 the grammar above), followed by ‘:’, the value of the octave
 (<code>O</code>, an integer value), and finally the duration (rule
 <code>d</code> above).</p>
-<p>In our implementation, we are expected to read the contents of a file
-following the above grammar, until the <code>End_of_file</code>
+<p>In your implementation, you are expected to read the contents of a
+file following the above grammar, until the <code>End_of_file</code>
 exception is raised. After this first step, you need to parse the
 textual contents you just read. You are, thus, supposed to separate the
 different components of each line according to its semantics. To split a
@@ -449,7 +449,7 @@ and print the newline character.</p>
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>  <span class="ex">dune</span> exec ./music.exe <span class="op">&lt;</span>XXX<span class="op">&gt;</span></span></code></pre></div>
 <p>where <code>&lt;XXX&gt;</code> should be replace with the name of the
 file containing the score description. As an example, we provide the
-file <code>frere_jacques</code> file in the package, which describes the
+file <code>frere_jacques</code> in the tarball, which describes the
 Frère Jacques song, as shown during lecture. You can run your solution
 to read this file as follows:</p>
 <div class="sourceCode" id="cb33"><pre
