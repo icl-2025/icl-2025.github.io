@@ -1,0 +1,225 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  <title>
+quad.ml</title>
+  <meta name="GENERATOR" content="caml2html 1.4.4">
+<style type="text/css">
+code,pre { color:black;background-color:white }a.Cannot { color:black;text-decoration:none }.Cstring { color: #aa4444; }
+.Craise { color: red; }
+.Cconstructor { color: #0033cc; }
+.Ccomment { color: #990000; }
+.Cassert,
+.Cinclude,
+.Copen { color: #cc9900; }
+.Cbar,
+.Cdo,
+.Cdone,
+.Cdownto,
+.Celse,
+.Cfor,
+.Cif,
+.Clazy,
+.Cmatch,
+.Cnew,
+.Cor,
+.Cthen,
+.Cto,
+.Ctry,
+.Cwhen,
+.Cwhile,
+.Cwith { color: #77aaaa; }
+.Cbegin,
+.Cend,
+.Cobject,
+.Csig,
+.Cstruct { color: #990099; }
+.Clinenum { color: black; background-color: silver; }
+.Cbackground { background-color: white; }
+.Cannot:hover { background-color: #b4eeb4; }
+.Calphakeyword,
+.Casr,
+.Cland,
+.Clor,
+.Clsl,
+.Clsr,
+.Clxor,
+.Cmod { color: #808080; }
+.Cfalse,
+.Cnonalphakeyword,
+.Cquotation,
+.Ctrue { }
+.Cand,
+.Cas,
+.Cclass,
+.Cconstraint,
+.Cexception,
+.Cexternal,
+.Cfun,
+.Cfunction,
+.Cfunctor,
+.Cin,
+.Cinherit,
+.Cinitializer,
+.Clet,
+.Cmethod,
+.Cmodule,
+.Cmutable,
+.Cof,
+.Cprivate,
+.Crec,
+.Ctype,
+.Cval,
+.Cvirtual { color: green; }
+</style>
+</head>
+<body>
+
+<pre><a name="quad.ml"></a><span class="Ctype">type</span> quad <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">White</span> <span class="Cbar">|</span> <span class="Cconstructor">Black</span> <span class="Cbar">|</span> <span class="Cconstructor">Node</span> <span class="Cof">of</span> quad <span class="Cnonalphakeyword">*</span> quad <span class="Cnonalphakeyword">*</span> quad <span class="Cnonalphakeyword">*</span> quad
+
+<span class="Clet">let</span> <span class="Crec">rec</span> checker_board n <span class="Cnonalphakeyword">=</span>
+  <span class="Cif">if</span> n <span class="Cnonalphakeyword">=</span> 0 <span class="Cthen">then</span> <span class="Cconstructor">Black</span>
+  <span class="Celse">else</span> <span class="Cif">if</span> n <span class="Cnonalphakeyword">=</span> 1 <span class="Cthen">then</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">)</span>
+  <span class="Celse">else</span> <span class="Clet">let</span> q <span class="Cnonalphakeyword">=</span> checker_board <span class="Cnonalphakeyword">(</span>n <span class="Cnonalphakeyword">-</span> 1<span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+    <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q<span class="Cnonalphakeyword">,</span> q<span class="Cnonalphakeyword">,</span> q<span class="Cnonalphakeyword">,</span> q<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> draw x y w <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">White</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Black</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>fill_rect x y w w
+  <span class="Cbar">|</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+    <span class="Clet">let</span> w <span class="Cnonalphakeyword">=</span> w / 2 <span class="Cin">in</span>
+    draw x y w q1<span class="Cnonalphakeyword">;</span>
+    draw <span class="Cnonalphakeyword">(</span>x <span class="Cnonalphakeyword">+</span> w<span class="Cnonalphakeyword">)</span> y w q2<span class="Cnonalphakeyword">;</span>
+    draw <span class="Cnonalphakeyword">(</span>x <span class="Cnonalphakeyword">+</span> w<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">(</span>y <span class="Cnonalphakeyword">+</span> w<span class="Cnonalphakeyword">)</span> w q3<span class="Cnonalphakeyword">;</span>
+    draw x <span class="Cnonalphakeyword">(</span>y <span class="Cnonalphakeyword">+</span> w<span class="Cnonalphakeyword">)</span> w q4
+
+<span class="Clet">let</span> node <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">White</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Black</span>
+  <span class="Cbar">|</span> q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> rotate <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">White</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">White</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Black</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Black</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+    node <span class="Cnonalphakeyword">(</span>rotate q4<span class="Cnonalphakeyword">,</span> rotate q1<span class="Cnonalphakeyword">,</span> rotate q2<span class="Cnonalphakeyword">,</span> rotate q3<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> mirror <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">White</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">White</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Black</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Black</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+    node <span class="Cnonalphakeyword">(</span>mirror q2<span class="Cnonalphakeyword">,</span> mirror q1<span class="Cnonalphakeyword">,</span> mirror q4<span class="Cnonalphakeyword">,</span> mirror q3<span class="Cnonalphakeyword">)</span>
+
+<span class="Ctype">type</span> bit <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Zero</span> <span class="Cbar">|</span> <span class="Cconstructor">One</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> unparse <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">White</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">[</span><span class="Cconstructor">Zero</span><span class="Cnonalphakeyword">]</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Black</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">[</span><span class="Cconstructor">One</span><span class="Cnonalphakeyword">]</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+    unparse q1 @
+    unparse q2 @
+    unparse q3 @
+    unparse q4
+
+<span class="Clet">let</span> char_of_bit <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Zero</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cstring">'0'</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">One</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cstring">'1'</span>
+
+<span class="Clet">let</span> unparse l <span class="Cnonalphakeyword">=</span>
+  unparse l |&gt; <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map char_of_bit |&gt; <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>to_seq |&gt; <span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>of_seq
+
+<span class="Clet">let</span> split l <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> <span class="Crec">rec</span> split_aux n l <span class="Cnonalphakeyword">=</span>
+    <span class="Cmatch">match</span> n<span class="Cnonalphakeyword">,</span> l <span class="Cwith">with</span>
+    <span class="Cbar">|</span> 0<span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">[</span><span class="Cnonalphakeyword">]</span><span class="Cnonalphakeyword">,</span> l<span class="Cnonalphakeyword">)</span>
+    <span class="Cbar">|</span> n<span class="Cnonalphakeyword">,</span> x <span class="Cnonalphakeyword">::</span> r <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Clet">let</span> l1<span class="Cnonalphakeyword">,</span> l2 <span class="Cnonalphakeyword">=</span> split_aux <span class="Cnonalphakeyword">(</span>n-1<span class="Cnonalphakeyword">)</span> r <span class="Cin">in</span>
+      <span class="Cnonalphakeyword">(</span>x <span class="Cnonalphakeyword">::</span> l1<span class="Cnonalphakeyword">,</span> l2<span class="Cnonalphakeyword">)</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cassert">assert</span> <span class="Cfalse">false</span> <span class="Cin">in</span>
+  split_aux <span class="Cnonalphakeyword">(</span><span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>length l / 2<span class="Cnonalphakeyword">)</span> l
+
+<span class="Clet">let</span> parse s <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> bit_of_char <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cstring">'1'</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">One</span>
+    <span class="Cbar">|</span> <span class="Cstring">'0'</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Zero</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cassert">assert</span> <span class="Cfalse">false</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> color_of_bit <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">One</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Black</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Zero</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">White</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> <span class="Crec">rec</span> quad_of_bit <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">[</span>q<span class="Cnonalphakeyword">]</span> <span class="Cnonalphakeyword">-&gt;</span> color_of_bit q
+    <span class="Cbar">|</span> l <span class="Cnonalphakeyword">-&gt;</span> <span class="Clet">let</span> ql<span class="Cnonalphakeyword">,</span> qu <span class="Cnonalphakeyword">=</span> split l <span class="Cin">in</span>
+      <span class="Clet">let</span> q1<span class="Cnonalphakeyword">,</span> q2 <span class="Cnonalphakeyword">=</span> split ql
+      <span class="Cand">and</span> q3<span class="Cnonalphakeyword">,</span> q4 <span class="Cnonalphakeyword">=</span> split qu <span class="Cin">in</span>
+      <span class="Clet">let</span> q1 <span class="Cnonalphakeyword">=</span> quad_of_bit q1 <span class="Cin">in</span>
+      <span class="Clet">let</span> q2 <span class="Cnonalphakeyword">=</span> quad_of_bit q2 <span class="Cin">in</span>
+      <span class="Clet">let</span> q3 <span class="Cnonalphakeyword">=</span> quad_of_bit q3 <span class="Cin">in</span>
+      <span class="Clet">let</span> q4 <span class="Cnonalphakeyword">=</span> quad_of_bit q4 <span class="Cin">in</span>
+      <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>q1<span class="Cnonalphakeyword">,</span> q2<span class="Cnonalphakeyword">,</span> q3<span class="Cnonalphakeyword">,</span> q4<span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> s <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>fold_left <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> a e <span class="Cnonalphakeyword">-&gt;</span> bit_of_char e <span class="Cnonalphakeyword">::</span> a<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">[</span><span class="Cnonalphakeyword">]</span> s <span class="Cin">in</span>
+  <span class="Clet">let</span> s <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>rev s <span class="Cin">in</span>
+  quad_of_bit s
+
+<span class="Clet">let</span> _pp_bit <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> pp <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Zero</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>printf <span class="Cstring">"0"</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">One</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>printf <span class="Cstring">"1"</span> <span class="Cin">in</span>
+  <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>iter pp
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> board <span class="Cnonalphakeyword">=</span> checker_board 3 <span class="Cin">in</span>
+  <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"%s@."</span> <span class="Cnonalphakeyword">(</span>unparse board<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>open_graph <span class="Cstring">" 3x3"</span><span class="Cnonalphakeyword">;</span>
+  <span class="Clet">let</span> board <span class="Cnonalphakeyword">=</span> checker_board 3 <span class="Cin">in</span>
+  draw 0 0 256 board<span class="Cnonalphakeyword">;</span>
+  ignore <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>read_key <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>clear_graph <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  <span class="Clet">let</span> m_board <span class="Cnonalphakeyword">=</span> mirror board <span class="Cin">in</span>
+  draw 0 0 256 <span class="Cnonalphakeyword">(</span>m_board<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  ignore <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>read_key <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>clear_graph <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  draw 0 0 256 <span class="Cnonalphakeyword">(</span>rotate m_board<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  ignore <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>read_key <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>clear_graph <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> frac4 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> frac3 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> frac2 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> frac1 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">White</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Black</span><span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> frac <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Node</span> <span class="Cnonalphakeyword">(</span>frac1<span class="Cnonalphakeyword">,</span> frac2<span class="Cnonalphakeyword">,</span> frac3<span class="Cnonalphakeyword">,</span> frac4<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>open_graph <span class="Cstring">" 3x3"</span><span class="Cnonalphakeyword">;</span>
+  draw 0 0 256 frac<span class="Cnonalphakeyword">;</span>
+  ignore <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>read_key <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> s <span class="Cnonalphakeyword">=</span> <span class="Cstring">"0101"</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> q <span class="Cnonalphakeyword">=</span> parse s <span class="Cin">in</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>open_graph <span class="Cstring">" 3x3"</span><span class="Cnonalphakeyword">;</span>
+  draw 0 0 256 q<span class="Cnonalphakeyword">;</span>
+  ignore <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>read_key <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> s <span class="Cnonalphakeyword">=</span>
+    <span class="Cstring">"0101010101010101010101010101010101010101010101010101010101010101"</span>
+  <span class="Cin">in</span>
+  <span class="Clet">let</span> q <span class="Cnonalphakeyword">=</span> parse s <span class="Cin">in</span>
+  <span class="Clet">let</span> s' <span class="Cnonalphakeyword">=</span> unparse q <span class="Cin">in</span>
+  <span class="Cassert">assert</span> <span class="Cnonalphakeyword">(</span>s <span class="Cnonalphakeyword">=</span> s'<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  <span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>open_graph <span class="Cstring">" 3x3"</span><span class="Cnonalphakeyword">;</span>
+  draw 0 0 256 q<span class="Cnonalphakeyword">;</span>
+  ignore <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Graphics</span><span class="Cnonalphakeyword">.</span>read_key <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+</pre>
+
+<hr>
+<p>
+<em>This document was generated using
+<a href="http://martin.jambon.free.fr/caml2html.html">caml2html</a></em>
+</body>
+</html>

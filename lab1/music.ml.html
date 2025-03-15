@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+  <title>
+music.ml</title>
+  <meta name="GENERATOR" content="caml2html 1.4.4">
+<style type="text/css">
+code,pre { color:black;background-color:white }a.Cannot { color:black;text-decoration:none }.Cstring { color: #aa4444; }
+.Craise { color: red; }
+.Cconstructor { color: #0033cc; }
+.Ccomment { color: #990000; }
+.Cassert,
+.Cinclude,
+.Copen { color: #cc9900; }
+.Cbar,
+.Cdo,
+.Cdone,
+.Cdownto,
+.Celse,
+.Cfor,
+.Cif,
+.Clazy,
+.Cmatch,
+.Cnew,
+.Cor,
+.Cthen,
+.Cto,
+.Ctry,
+.Cwhen,
+.Cwhile,
+.Cwith { color: #77aaaa; }
+.Cbegin,
+.Cend,
+.Cobject,
+.Csig,
+.Cstruct { color: #990099; }
+.Clinenum { color: black; background-color: silver; }
+.Cbackground { background-color: white; }
+.Cannot:hover { background-color: #b4eeb4; }
+.Calphakeyword,
+.Casr,
+.Cland,
+.Clor,
+.Clsl,
+.Clsr,
+.Clxor,
+.Cmod { color: #808080; }
+.Cfalse,
+.Cnonalphakeyword,
+.Cquotation,
+.Ctrue { }
+.Cand,
+.Cas,
+.Cclass,
+.Cconstraint,
+.Cexception,
+.Cexternal,
+.Cfun,
+.Cfunction,
+.Cfunctor,
+.Cin,
+.Cinherit,
+.Cinitializer,
+.Clet,
+.Cmethod,
+.Cmodule,
+.Cmutable,
+.Cof,
+.Cprivate,
+.Crec,
+.Ctype,
+.Cval,
+.Cvirtual { color: green; }
+</style>
+</head>
+<body>
+
+<pre><a name="music.ml"></a>
+<span class="Ccomment">(* -------------------------------------------------------------------------- *)</span>
+<span class="Ccomment">(* ----------------------- DEFINITIONS OF MUSIC SCORES ---------------------- *)</span>
+<span class="Ccomment">(* -------------------------------------------------------------------------- *)</span>
+
+<span class="Ctype">type</span> note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">C</span> <span class="Cbar">|</span> <span class="Cconstructor">D</span> <span class="Cbar">|</span> <span class="Cconstructor">E</span> <span class="Cbar">|</span> <span class="Cconstructor">F</span> <span class="Cbar">|</span> <span class="Cconstructor">G</span> <span class="Cbar">|</span> <span class="Cconstructor">A</span> <span class="Cbar">|</span> <span class="Cconstructor">B</span>
+<span class="Ctype">type</span> pitch <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">{</span> note : note<span class="Cnonalphakeyword">;</span> octave : int <span class="Cnonalphakeyword">}</span>
+<span class="Ctype">type</span> duration <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Full</span> <span class="Cbar">|</span> <span class="Cconstructor">Half</span> <span class="Cbar">|</span> <span class="Cconstructor">Quarter</span> <span class="Cbar">|</span> <span class="Cconstructor">Eighth</span> <span class="Cbar">|</span> <span class="Cconstructor">Sixteenth</span>
+<span class="Ctype">type</span> symbol <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cof">of</span> duration <span class="Cnonalphakeyword">*</span> pitch <span class="Cbar">|</span> <span class="Cconstructor">Rest</span> <span class="Cof">of</span> duration
+<span class="Ctype">type</span> score <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">{</span> symbols : symbol list<span class="Cnonalphakeyword">;</span>  tempo : int <span class="Cnonalphakeyword">}</span>
+
+<span class="Clet">let</span> o1_frequency t <span class="Cnonalphakeyword">=</span> <span class="Cmatch">match</span> t <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">C</span> <span class="Cnonalphakeyword">-&gt;</span> 32.70
+  <span class="Cbar">|</span> <span class="Cconstructor">D</span> <span class="Cnonalphakeyword">-&gt;</span> 36.71
+  <span class="Cbar">|</span> <span class="Cconstructor">E</span> <span class="Cnonalphakeyword">-&gt;</span> 41.20
+  <span class="Cbar">|</span> <span class="Cconstructor">F</span> <span class="Cnonalphakeyword">-&gt;</span> 43.65
+  <span class="Cbar">|</span> <span class="Cconstructor">G</span> <span class="Cnonalphakeyword">-&gt;</span> 49.
+  <span class="Cbar">|</span> <span class="Cconstructor">A</span> <span class="Cnonalphakeyword">-&gt;</span> 55.
+  <span class="Cbar">|</span> <span class="Cconstructor">B</span> <span class="Cnonalphakeyword">-&gt;</span> 61.74
+
+<span class="Clet">let</span> frequency p <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> f0 <span class="Cnonalphakeyword">=</span> o1_frequency p<span class="Cnonalphakeyword">.</span>note <span class="Cin">in</span>
+  f0 *. <span class="Cnonalphakeyword">(</span>2. ** float p<span class="Cnonalphakeyword">.</span>octave<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> duration d t <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> t <span class="Cnonalphakeyword">=</span> 60. /. <span class="Cnonalphakeyword">(</span>float_of_int t<span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+  <span class="Cmatch">match</span> d <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Sixteenth</span> <span class="Cnonalphakeyword">-&gt;</span> t /. 4.
+  <span class="Cbar">|</span> <span class="Cconstructor">Eighth</span>    <span class="Cnonalphakeyword">-&gt;</span> t /. 2.
+  <span class="Cbar">|</span> <span class="Cconstructor">Quarter</span>   <span class="Cnonalphakeyword">-&gt;</span> t +. 0.0001
+  <span class="Cbar">|</span> <span class="Cconstructor">Half</span>      <span class="Cnonalphakeyword">-&gt;</span> t *. 2.
+  <span class="Cbar">|</span> <span class="Cconstructor">Full</span>      <span class="Cnonalphakeyword">-&gt;</span> t *. 4.
+
+<span class="Clet">let</span> df_of_symbol s tp <span class="Cnonalphakeyword">=</span>
+  <span class="Cmatch">match</span> s <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Rest</span> d <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">(</span>duration d tp<span class="Cnonalphakeyword">,</span> 0.<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span>d<span class="Cnonalphakeyword">,</span> f<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">(</span>duration d tp<span class="Cnonalphakeyword">,</span> frequency f<span class="Cnonalphakeyword">)</span>
+
+<span class="Ccomment">(* -------------------------------------------------------------------------- *)</span>
+<span class="Ccomment">(* ------------------------------ PLAYING SOUNDS  --------------------------- *)</span>
+<span class="Ccomment">(* -------------------------------------------------------------------------- *)</span>
+
+<span class="Clet">let</span> play_sound s tp <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> <span class="Cnonalphakeyword">(</span>d<span class="Cnonalphakeyword">,</span> f<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span> df_of_symbol s tp <span class="Cin">in</span>
+  <span class="Clet">let</span> pid <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Unix</span><span class="Cnonalphakeyword">.</span>create_process
+      <span class="Cstring">"/usr/bin/play"</span>
+      <span class="Cnonalphakeyword">[|</span><span class="Cstring">"play"</span><span class="Cnonalphakeyword">;</span> <span class="Cstring">"-r"</span><span class="Cnonalphakeyword">;</span> <span class="Cstring">"44100"</span><span class="Cnonalphakeyword">;</span> <span class="Cstring">"-n"</span><span class="Cnonalphakeyword">;</span> <span class="Cstring">"synth"</span><span class="Cnonalphakeyword">;</span> string_of_float d<span class="Cnonalphakeyword">;</span> <span class="Cstring">"sin"</span><span class="Cnonalphakeyword">;</span> string_of_float f <span class="Cnonalphakeyword">|]</span>
+      <span class="Cconstructor">Unix</span><span class="Cnonalphakeyword">.</span>stdin <span class="Cconstructor">Unix</span><span class="Cnonalphakeyword">.</span>stdout <span class="Cconstructor">Unix</span><span class="Cnonalphakeyword">.</span>stderr <span class="Cin">in</span>
+  <span class="Clet">let</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Unix</span><span class="Cnonalphakeyword">.</span>waitpid <span class="Cnonalphakeyword">[</span><span class="Cnonalphakeyword">]</span> pid <span class="Cin">in</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> play_score sc <span class="Cnonalphakeyword">=</span>
+  <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>iter <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> s <span class="Cnonalphakeyword">-&gt;</span> play_sound s sc<span class="Cnonalphakeyword">.</span>tempo<span class="Cnonalphakeyword">)</span> sc<span class="Cnonalphakeyword">.</span>symbols
+
+<span class="Ccomment">(* let () = Printf.printf "%.2f\n" (o1_frequency G) *)</span>
+<span class="Clet">let</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">A</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 3<span class="Cnonalphakeyword">}</span>
+<span class="Clet">let</span> r_4 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Rest</span> <span class="Cconstructor">Quarter</span>
+<span class="Clet">let</span> r_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Rest</span> <span class="Cconstructor">Eighth</span>
+<span class="Clet">let</span> r_16 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Rest</span> <span class="Cconstructor">Sixteenth</span>
+<span class="Clet">let</span> g_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">G</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> sol_4_8 <span class="Cnonalphakeyword">=</span> g_4_8
+<span class="Clet">let</span> f_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">F</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> _fa_4_8 <span class="Cnonalphakeyword">=</span> f_4_8
+<span class="Clet">let</span> e_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">E</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> mi_4_8 <span class="Cnonalphakeyword">=</span> e_4_8
+<span class="Clet">let</span> d_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">D</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> re_4_8 <span class="Cnonalphakeyword">=</span> d_4_8
+<span class="Clet">let</span> c_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">C</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> do_4_8 <span class="Cnonalphakeyword">=</span> c_4_8
+<span class="Clet">let</span> a_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">A</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> la_4_8 <span class="Cnonalphakeyword">=</span> a_4_8
+<span class="Clet">let</span> b_4_8 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Eighth</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">{</span>note <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">B</span><span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">=</span> 4<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> si_4_8 <span class="Cnonalphakeyword">=</span> b_4_8
+
+<span class="Clet">let</span> l1 <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">[</span>r_4<span class="Cnonalphakeyword">;</span> r_16<span class="Cnonalphakeyword">;</span> r_8<span class="Cnonalphakeyword">]</span>
+<span class="Clet">let</span> l2 <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">[</span>f_4_8<span class="Cnonalphakeyword">;</span> e_4_8<span class="Cnonalphakeyword">;</span> d_4_8<span class="Cnonalphakeyword">]</span>
+<span class="Clet">let</span> l3 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>init 7 <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> _i <span class="Cnonalphakeyword">-&gt;</span> g_4_8<span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> sc1 <span class="Cnonalphakeyword">=</span> r_4 <span class="Cnonalphakeyword">::</span> l3 @ l2 @ l1
+
+<span class="Clet">let</span> _sc2 <span class="Cnonalphakeyword">=</span> sc1 @ <span class="Cnonalphakeyword">[</span>r_8<span class="Cnonalphakeyword">;</span> d_4_8<span class="Cnonalphakeyword">]</span> @ l3 @ <span class="Cnonalphakeyword">[</span>f_4_8<span class="Cnonalphakeyword">;</span> e_4_8<span class="Cnonalphakeyword">;</span> d_4_8<span class="Cnonalphakeyword">]</span>
+           @ <span class="Cnonalphakeyword">[</span>r_8<span class="Cnonalphakeyword">;</span> c_4_8<span class="Cnonalphakeyword">;</span> d_4_8<span class="Cnonalphakeyword">;</span> d_4_8<span class="Cnonalphakeyword">;</span> <span class="Cnonalphakeyword">]</span>
+
+<span class="Clet">let</span> sc3 <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">[</span> c_4_8<span class="Cnonalphakeyword">;</span> d_4_8<span class="Cnonalphakeyword">;</span> e_4_8<span class="Cnonalphakeyword">;</span> f_4_8<span class="Cnonalphakeyword">;</span> g_4_8<span class="Cnonalphakeyword">;</span> a_4_8<span class="Cnonalphakeyword">;</span> b_4_8 <span class="Cnonalphakeyword">]</span>
+
+<span class="Clet">let</span> increase_pitch_octave p <span class="Cnonalphakeyword">=</span>
+  <span class="Cnonalphakeyword">{</span> p <span class="Cwith">with</span> octave <span class="Cnonalphakeyword">=</span> p<span class="Cnonalphakeyword">.</span>octave <span class="Cnonalphakeyword">+</span> 1 <span class="Cnonalphakeyword">}</span>
+
+<span class="Clet">let</span> decrease_pitch_octave p <span class="Cnonalphakeyword">=</span>
+  <span class="Cnonalphakeyword">{</span> p <span class="Cwith">with</span> octave <span class="Cnonalphakeyword">=</span> p<span class="Cnonalphakeyword">.</span>octave <span class="Cnonalphakeyword">-</span> 1 <span class="Cnonalphakeyword">}</span>
+
+<span class="Clet">let</span> change_octave <span class="Cnonalphakeyword">(</span>f: pitch <span class="Cnonalphakeyword">-&gt;</span> pitch<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">(</span>s: symbol<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Cmatch">match</span> s <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span>d<span class="Cnonalphakeyword">,</span> p<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span>d<span class="Cnonalphakeyword">,</span> f p<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Rest</span> d <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Rest</span> d
+
+<span class="Clet">let</span> increase_octave <span class="Cnonalphakeyword">=</span> change_octave increase_pitch_octave
+<span class="Clet">let</span> decrease_octave <span class="Cnonalphakeyword">=</span> change_octave decrease_pitch_octave
+
+<span class="Clet">let</span> increase_duration <span class="Cnonalphakeyword">(</span>s: symbol<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> increase <span class="Cnonalphakeyword">(</span>d: duration<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+    <span class="Cmatch">match</span> d <span class="Cwith">with</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Full</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Full</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Half</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Full</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Quarter</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Half</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Eighth</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Quarter</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Sixteenth</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Eighth</span> <span class="Cin">in</span>
+  <span class="Cmatch">match</span> s <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span>d<span class="Cnonalphakeyword">,</span> p<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span>increase d<span class="Cnonalphakeyword">,</span> p<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Rest</span> d <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Rest</span> d
+
+<span class="Clet">let</span> decrease_duration <span class="Cnonalphakeyword">(</span>s: symbol<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Cmatch">match</span> s <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> p<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Sixteenth</span><span class="Cnonalphakeyword">,</span> p<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Rest</span> d <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Rest</span> d
+
+<span class="Clet">let</span> sc4 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>rev <span class="Cnonalphakeyword">(</span><span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map increase_octave sc3<span class="Cnonalphakeyword">)</span>
+<span class="Clet">let</span> sc5 <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>rev <span class="Cnonalphakeyword">(</span><span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map decrease_octave sc3<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  play_score <span class="Cnonalphakeyword">{</span> symbols <span class="Cnonalphakeyword">=</span> sc3 @ r_4 <span class="Cnonalphakeyword">::</span> sc4 @ r_4 <span class="Cnonalphakeyword">::</span> sc5<span class="Cnonalphakeyword">;</span> tempo <span class="Cnonalphakeyword">=</span> 292 <span class="Cnonalphakeyword">}</span>
+
+<span class="Clet">let</span> _frere_jacques <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">[</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  la_4_8<span class="Cnonalphakeyword">;</span>
+  si_4_8<span class="Cnonalphakeyword">;</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  la_4_8<span class="Cnonalphakeyword">;</span>
+  si_4_8<span class="Cnonalphakeyword">;</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  si_4_8<span class="Cnonalphakeyword">;</span>
+
+  increase_octave do_4_8<span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>increase_duration re_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  si_4_8<span class="Cnonalphakeyword">;</span>
+  increase_octave do_4_8<span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>increase_duration re_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration re_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration mi_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration re_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration do_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  si_4_8<span class="Cnonalphakeyword">;</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration re_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration mi_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration re_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  increase_octave <span class="Cnonalphakeyword">(</span>decrease_duration do_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+  si_4_8<span class="Cnonalphakeyword">;</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  re_4_8<span class="Cnonalphakeyword">;</span>
+  increase_duration sol_4_8<span class="Cnonalphakeyword">;</span>
+
+  sol_4_8<span class="Cnonalphakeyword">;</span>
+  re_4_8<span class="Cnonalphakeyword">;</span>
+  increase_duration <span class="Cnonalphakeyword">(</span>increase_duration sol_4_8<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+<span class="Cnonalphakeyword">]</span>
+
+<span class="Ctype">type</span> tokens <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Tempo</span> <span class="Cof">of</span> int <span class="Cbar">|</span> <span class="Cconstructor">Pitch</span> <span class="Cof">of</span> string <span class="Cnonalphakeyword">*</span> int <span class="Cnonalphakeyword">*</span> string
+
+<span class="Clet">let</span> score_of_file fname <span class="Cnonalphakeyword">=</span>
+  <span class="Clet">let</span> cin <span class="Cnonalphakeyword">=</span> open_in fname <span class="Cin">in</span>
+  <span class="Clet">let</span> text <span class="Cnonalphakeyword">=</span> ref <span class="Cnonalphakeyword">[</span><span class="Cnonalphakeyword">]</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> <span class="Crec">rec</span> read_loop <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+    <span class="Ctry">try</span>
+      <span class="Clet">let</span> line <span class="Cnonalphakeyword">=</span> input_line cin <span class="Cin">in</span>
+      text <span class="Cnonalphakeyword">:=</span> line <span class="Cnonalphakeyword">::</span> !text<span class="Cnonalphakeyword">;</span>
+      read_loop <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span>
+    <span class="Cwith">with</span> <span class="Cconstructor">End_of_file</span> <span class="Cnonalphakeyword">-&gt;</span> !text <span class="Cin">in</span>
+  <span class="Clet">let</span> split_file <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map <span class="Cnonalphakeyword">(</span><span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>split_on_char <span class="Cstring">':'</span><span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> parse_line s <span class="Cnonalphakeyword">=</span> <span class="Cmatch">match</span> s <span class="Cwith">with</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">[</span>tempo_or_pitch<span class="Cnonalphakeyword">;</span> info<span class="Cnonalphakeyword">]</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cbegin">begin</span> <span class="Cmatch">match</span> tempo_or_pitch <span class="Cwith">with</span>
+        <span class="Cbar">|</span> <span class="Cstring">"Tempo"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Tempo</span> <span class="Cnonalphakeyword">(</span>int_of_string <span class="Cnonalphakeyword">(</span><span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>trim info<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+        <span class="Cbar">|</span> pitch <span class="Cnonalphakeyword">-&gt;</span>
+          <span class="Cbegin">begin</span> <span class="Cmatch">match</span> <span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>split_on_char <span class="Cstring">' '</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>trim info<span class="Cnonalphakeyword">)</span> <span class="Cwith">with</span>
+            <span class="Cbar">|</span> <span class="Cnonalphakeyword">[</span>octave<span class="Cnonalphakeyword">;</span> duration<span class="Cnonalphakeyword">]</span> <span class="Cnonalphakeyword">-&gt;</span>
+              <span class="Clet">let</span> octave <span class="Cnonalphakeyword">=</span> int_of_string octave <span class="Cin">in</span>
+              <span class="Cconstructor">Pitch</span> <span class="Cnonalphakeyword">(</span>pitch<span class="Cnonalphakeyword">,</span> octave<span class="Cnonalphakeyword">,</span> duration<span class="Cnonalphakeyword">)</span>
+            <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"Anomaly: syntax error@."</span><span class="Cnonalphakeyword">;</span> exit 3
+          <span class="Cend">end</span> <span class="Cend">end</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"Anomaly: syntax error@."</span><span class="Cnonalphakeyword">;</span> exit 2 <span class="Cin">in</span>
+  <span class="Clet">let</span> parse_file <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map parse_line <span class="Cin">in</span>
+  <span class="Clet">let</span> note_of_string <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Do"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">C</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Re"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">D</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Mi"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">E</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Fa"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">F</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Sol"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">G</span>
+    <span class="Cbar">|</span> <span class="Cstring">"La"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">A</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Si"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">B</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"Anomaly: lexer error@."</span><span class="Cnonalphakeyword">;</span> exit 4 <span class="Cin">in</span>
+  <span class="Clet">let</span> duration_of_string <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Six"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Sixteenth</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Eighth"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Eighth</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Quarter"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Quarter</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Half"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Half</span>
+    <span class="Cbar">|</span> <span class="Cstring">"Full"</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Full</span>
+    <span class="Cbar">|</span> s <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"Anomaly: lexer error \"%s\"@."</span> s<span class="Cnonalphakeyword">;</span> exit 5 <span class="Cin">in</span>
+  <span class="Clet">let</span> note_of_token <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Tempo</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cassert">assert</span> <span class="Cfalse">false</span>
+    <span class="Cbar">|</span> <span class="Cconstructor">Pitch</span> <span class="Cnonalphakeyword">(</span>s<span class="Cnonalphakeyword">,</span> octave<span class="Cnonalphakeyword">,</span> d<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Clet">let</span> p <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">{</span> note <span class="Cnonalphakeyword">=</span> note_of_string s<span class="Cnonalphakeyword">;</span> octave <span class="Cnonalphakeyword">}</span> <span class="Cin">in</span>
+      <span class="Clet">let</span> d <span class="Cnonalphakeyword">=</span> duration_of_string d <span class="Cin">in</span>
+      <span class="Cconstructor">Note</span> <span class="Cnonalphakeyword">(</span>d<span class="Cnonalphakeyword">,</span> p<span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> score_of_tokens <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">[</span><span class="Cnonalphakeyword">]</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"Anomaly: ill-typed file@."</span><span class="Cnonalphakeyword">;</span> exit 6
+    <span class="Cbar">|</span> <span class="Cconstructor">Tempo</span> tempo <span class="Cnonalphakeyword">::</span> r <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">{</span> tempo<span class="Cnonalphakeyword">;</span> symbols <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map note_of_token r <span class="Cnonalphakeyword">}</span>
+    <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Format</span><span class="Cnonalphakeyword">.</span>eprintf <span class="Cstring">"Anomaly: ill-typed file@."</span><span class="Cnonalphakeyword">;</span> exit 7 <span class="Cin">in</span>
+  <span class="Clet">let</span> file <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>rev <span class="Cnonalphakeyword">(</span>read_loop <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+  <span class="Clet">let</span> file <span class="Cnonalphakeyword">=</span> split_file file <span class="Cin">in</span>
+  <span class="Clet">let</span> file <span class="Cnonalphakeyword">=</span> parse_file file <span class="Cin">in</span>
+  score_of_tokens file
+
+<span class="Clet">let</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  play_score <span class="Cnonalphakeyword">(</span>score_of_file <span class="Cconstructor">Sys</span><span class="Cnonalphakeyword">.</span>argv<span class="Cnonalphakeyword">.</span><span class="Cnonalphakeyword">(</span>1<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+</pre>
+
+<hr>
+<p>
+<em>This document was generated using
+<a href="http://martin.jambon.free.fr/caml2html.html">caml2html</a></em>
+</body>
+</html>
