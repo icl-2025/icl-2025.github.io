@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="" />
-  <title>ICL 2025 - LAB 2 [Bonus] - Extensions to the While language (in OCaml)</title>
+  <title>ICL 2025 - LAB 2 [Bonus] - Extensions to the While language (in Java)</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -93,7 +93,7 @@
 <body>
 <header id="title-block-header">
 <h1 class="title">ICL 2025 - LAB 2 [Bonus] - Extensions to the While
-language (in OCaml)</h1>
+language (in Java)</h1>
 <p class="author"></p>
 </header>
 <p>This page describes a bonus implementation exercise of ICL-2025 lab
@@ -104,98 +104,97 @@ to cope with <code>repeat..until</code> loop and pairs. This exercise
 also serves as a warm up for next week lab, where you have to implement
 an interpreter for a more serious programming language.</p>
 <p>To help you building this extensions, we provide the basic structure
-(as a set of OCaml files together with <code>dune</code>), to be
-downloaded here: <a href="while.tar.gz">while.tar.gz</a>.</p>
-<p>Once uncompressed (with <code>tar zxvf while.tar.gz</code>), you get
-a directory <code>while/</code> with the following files:</p>
+(as a set of Java files together with <code>Makefile</code>), to be
+downloaded here: <a href="while_java.tar.gz">while_java.tar.gz</a>.</p>
+<p>Once uncompressed (with <code>tar zxvf while_java.tar.gz</code>), you
+get a directory <code>while_java/</code>. This project contains a
+package <code>whileLang</code> with the following files:</p>
 <center>
 <table border="yes">
 <tr>
 <td>
-ast.ml
+*.java
 <td>
-abstract syntax of <code>While</code> (complete)
+set of files encoding the abstract syntax of <code>While</code> language
+(complete)
 <tr>
 <td>
-interp.ml
+Interp.java
 <td>
-interpreter (<font color="red">to be completed</font>)
+interpreter, implementing the <em>Visitor</em> pattern
+(<font color="red">to be completed</font>)
 <tr>
 <td>
-while.ml
+Main.java
 <td>
 main file (complete)
 <tr>
 <td>
-dune
+Makefile
 <td>
 to automate the building process (complete)
 </table>
 </center>
-<p>The code compiles, using <code>dune build</code>, but it is
-incomplete. You have to complete <code>interp.ml</code>.</p>
-<p>To run your solution do <code>dune exec ./while.exe</code>.</p>
+<p>The code compiles, using <code>make all</code>, but it is incomplete.
+You have to complete <code>Interp.java</code>.</p>
+<p>To run your solution do <code>make test</code>.</p>
 <h2 id="exercise-1-pairs">Exercise 1: Pairs</h2>
 <p>This exercises proposes you to add the cases of pair construction and
-projections to the <code>expr</code> function, the interpreter of pure
-expressions. This function is of the following type:</p>
+projections to the interpreter, as described in the interface
+<code>Visitor.java</code>. In particular, you shall provide
+implementation for the methods</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> expr : env -&gt; expr -&gt; value</span></code></pre></div>
-<p>Recall that function <code>expr</code> takes as arguments an
-environment, of type <code>env</code>, and an expression of type
-<code>expr</code>. It returns the value that corresponds to the result
-of fully evaluating such an expression.</p>
-<h3 id="question-1.1-pairs-as-values">Question 1.1: Pairs as values</h3>
-<p>Complete the case <code>EValue (VPair (_, _))</code> of the
-<code>expr</code> function. A value of the form
-<code>VPair (v1, v2)</code> stands for a fully-evaluated pair with
-<code>v1</code> and <code>v2</code> as first and second component,
-respectively. Given the recursive nature of type <code>value</code>, a
-<code>v1</code> or <code>v2</code> can also be nested pairs.</p>
-<h3 id="question-1.2-pairs-as-expressions">Question 1.2: Pairs as
-expressions</h3>
-<p>Complete the case <code>EPair (_, _)</code> of the <code>expr</code>
-function. A value of the form <code>EPair (e1, e2)</code> stands for a
-pair where components <code>e1</code> and <code>e2</code> are not yet
-fully-evaluated expressions.</p>
-<h3 id="question-1.3-first-projection">Question 1.3: First
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  Value <span class="fu">interp</span> <span class="op">(</span>Epair e<span class="op">);</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  Value <span class="fu">interp</span> <span class="op">(</span>Efst e<span class="op">);</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  Value <span class="fu">interp</span> <span class="op">(</span>Esnd e<span class="op">);</span></span></code></pre></div>
+<p>contained in the <code>Interp.java</code>. Recall that the
+implementation of the interpreter visitor provides a method for each
+construction of the <code>While</code> language abstract syntax and
+stores the environment as an instance variable. In particular, the three
+above methods return the value that corresponds to the result of fully
+evaluating such an expression.</p>
+<h3 id="question-1.1-pair-construction">Question 1.1: Pair
+construction</h3>
+<p>Complete the <code>Value interp (Epair e)</code> method of the
+<code>Interp.java</code> class. An object <code>e</code> of class
+<code>Epair</code> stands for a pair with components <code>e1</code> and
+<code>e2</code>, not yet fully-evaluated expressions.</p>
+<h3 id="question-1.2-first-projection">Question 1.2: First
 projection</h3>
-<p>Complete the case <code>EFst e</code> of the <code>expr</code>
-function. This case stands for a call to the <code>fst</code>
-projection, returning the first component of expression <code>e</code>,
-which should thus evaluate into a <code>VPair</code>. If that is not the
-case, signal this error at runtime via a <code>failwith</code>
-message.</p>
-<h3 id="question-1.4-second-projection">Question 1.4: Second
+<p>Complete the <code>Value interp (Efst e)</code> method of the
+<code>Interp.java</code> class. An object <code>e</code> of class
+<code>Efst</code> stands for a call to the <code>fst</code> projection,
+returning the first component of expression <code>e</code>, which should
+thus evaluate into a <code>Vpair</code>.</p>
+<h3 id="question-1.3-second-projection">Question 1.3: Second
 projection</h3>
-<p>Complete the case <code>ESnd e</code> of the <code>expr</code>
-function. This case stands for a call to the <code>snd</code>
-projection, returning the second component of expression <code>e</code>,
-which should thus evaluate into a <code>VPair</code>. If that is not the
-case, signal this error at runtime via a <code>failwith</code>
-message.</p>
+<p>Complete the <code>Value interp (Esnd e)</code> method of the
+<code>Interp.java</code> class. An object <code>e</code> of class
+<code>Esnd</code> stands for a call to the <code>snd</code> projection,
+returning the second component of expression <code>e</code>, which
+should thus evaluate into a <code>Vpair</code>.</p>
 <h2 id="exercise-2-repeat..until-loop">Exercise 2: Repeat..until
 loop</h2>
 <p>This exercises proposes you to add the case of evaluation of the
-<code>repeat..until</code> construction to the <code>stmt</code>
-function, the interpreter of statements. This function is of the
-following type:</p>
+<code>repeat..until</code> construction to the interpreter, as described
+in the interface <code>Visitor.java</code>. In particular, you shall
+provide implementation for the method</p>
 <div class="sourceCode" id="cb2"><pre
-class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">val</span> stmt : env -&gt; stmt -&gt; <span class="dt">unit</span></span></code></pre></div>
-<p>Recall that function <code>stmt</code> takes as arguments an
-environment, of type <code>env</code>, and a statement of type
-<code>stmt</code>. Since the environment is represented as mutable data
-structure (an hash table), there is no need to return its value. One
-just needs to use the same variable (which in reality stores a
-<em>pointer</em>) that was initially passed as an argument to function
-<code>stmt</code>.</p>
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> <span class="fu">interp</span> <span class="op">(</span>Erepeat s<span class="op">);</span></span></code></pre></div>
+<p>contained in the <code>Interp.java</code>. This method returns
+<code>void</code>, meaning it locally changes the state of the
+environment store in an <code>Interp</code> instance. Since the
+environment is represented as mutable data structure (an hash map),
+there is no need to return its value. One just needs to access the
+environment instance variable (which in reality stores a
+<em>pointer</em>).</p>
 <h3 id="question-2.1-repeat..until-as-a-statement">Question 2.1:
 Repeat..until as a statement</h3>
-<p>Complete the case <code>SRepeat</code> of the <code>stmt</code>
-expression. This case stands for the use of a
+<p>Complete the <code>void interp (Srepeat s)</code> method of the
+<code>Interp.java</code> class. This method stands for the use of a
 <code>repeat s until e</code> construction, meaning that one should
 execute first statement <code>s</code> and then repeat its execution
-until <code>e</code> evaluates down to the <code>VBool true</code>
+until <code>e</code> evaluates down to the <code>Vbool(true)</code>
 value.</p>
 <p><strong>[Hint]</strong>: as noted in the <a
 href="lab2.pdf">pen-and-paper exercises sheet</a>, the
@@ -206,10 +205,11 @@ previously existing statement. To do so, it might come in handy to use
 the unary negation to get the opposite of a Boolean value. This
 operation is already included in the language:</p>
 <ul>
-<li>node <code>UNeg</code> of type <code>unop</code> stands for the
-negation unary operation;</li>
-<li>node <code>EUnop</code> of type <code>expr</code> stands for a call
-of a unary operation on an pure expression</li>
+<li>file <code>Unop.java</code> contains the negation unary
+operation;</li>
+<li>class <code>Eunop</code> (in file <code>Eunop.java</code>) extends
+class <code>Expr</code> and stands for a call of a unary operation on an
+pure expression;</li>
 <li>the evaluation of unary operations is already implemented for
 you.</li>
 </ul>
@@ -219,7 +219,7 @@ you.</li>
 <hr />
 <!--
 Local Variables:
-compile-command: "pandoc -s -c ../style.css bonus.md -o bonus.html -A footer.html"
+compile-command: "pandoc -s -c ../style.css bonus_java.md -o bonus_java.html -A footer.html"
 End:
 -->
 <div id="footer">
