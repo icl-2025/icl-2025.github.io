@@ -38,4 +38,6 @@ to do so.
 | 1    | 11 Mar | Exercises using the OCaml language |        |  [Lab 1](lab1)    |
 | 2    | 18 Mar | Abstract syntax, semantics, and interpreters  | [Lecture 2](lecture2.pdf)         |      |
 | 2    | 18 Mar | Pen-and-paper exercises on semantics |        |  [Lab 2](lab2/lab2.pdf) <br>[Bonus, in OCaml](lab2/bonus) <br> [Bonus, in Java](lab2/bonus_java)  |
+| 3    | 25 Mar | Lexical analysis  | [Lecture 3](lecture3.pdf)         |      |
+| 3    | 25 Mar | Mini-python interpreter |        |  [in OCaml](lab3/index) <br> [in Java](lab3/index_java)  |
 | ---- | ---- | ------ | ------ | ---- |
