@@ -1,28 +1,38 @@
-<html>
-
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="stylesheet" type="text/css" href="../../style.css">
-<title>
-CSC_52064 - Compilation - TD 2 - Mini-Python interpreter (in Java)
-</title>
-<style>
-tt {
-        color:blue;
-}
-pre {
-        color:blue;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="" />
+  <title>ICL 2025 - LAB 3 - Mini-python interpreter (in Java)</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
 </head>
-
 <body>
-
-<h1>CSC_52064 - TD 2 - Mini-Python interpreter (in Java)</h1>
-
-The goal of this lab is to build an interpreter for a simple fragment
-of Python, called <b>mini-Python</b>. You don't have to know Python.
-
+<header id="title-block-header">
+<h1 class="title">ICL 2025 - LAB 3 - Mini-python interpreter (in
+Java)</h1>
+<p class="author"></p>
+</header>
+<p>The goal of this lab is to build an interpreter for a simple fragment
+of Python, called <b>mini-Python</b>. You don’t have to know Python.</p>
 A <b>mini-Python</b> file has the following structure:
 <pre>
 # zero, one or several function definitions at the beginning of the file
@@ -40,74 +50,93 @@ print("a few values of the Fibonacci sequence:")
 for n in [0, 1, 11, 42]:
     print(fib(n))
 </pre>
-More generally, a <b>mini-Python</b> file is composed
-of an optional list of function definitions, followed by a list of statements.
-Caveat: the last statement must be followed by a newline.
-
+<p>More generally, a <b>mini-Python</b> file is composed of an optional
+list of function definitions, followed by a list of statements. Caveat:
+the last statement must be followed by a newline.</p>
 <p>
-
-Statements are: assignment, conditional, loop
-(<tt>for</tt>), output with <tt>print</tt>, returning a value
-with <tt>return</tt>, and evaluation an expression.
-Expressions are: a constant (Boolean, integer, or string),
-access to a variable,
-building a list (with syntax <tt>[e1, e2,
-  ..., en]</tt>), access to a list element (with syntax
-notation <tt>e[i]</tt>), function call, or one of the operations
-<tt>+</tt>, <tt>-</tt>, <tt>*</tt>, <tt>//</tt>,
-<tt>==</tt>, <tt><></tt>, <tt><</tt>, <tt><=</tt>, <tt>></tt>,
-<tt>>=</tt>, <tt>and</tt>, <tt>or</tt> and <tt>not</tt>.
-
+<p>Statements are: assignment, conditional, loop (<code>for</code>),
+output with <code>print</code>, returning a value with
+<code>return</code>, and evaluation an expression. Expressions are: a
+constant (Boolean, integer, or string), access to a variable, building a
+list (with syntax <code>[e1, e2,   ..., en]</code>), access to a list
+element (with syntax notation <code>e[i]</code>), function call, or one
+of the operations <code>+</code>, <code>-</code>, <code>*</code>,
+<code>//</code>, <code>==</code>, <code>&lt;&gt;</code>,
+<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+<code>&gt;=</code>, <code>and</code>, <code>or</code> and
+<code>not</code>.</p>
 <p>
-
-We also consider three built-in functions: <tt>list(range(n))</tt>
-builds the list <tt>[0, 1, 2, ..., n-1]</tt> and <tt>len(l)</tt>
-returns the length of list <tt>l</tt>. (We only use
-<tt>list</tt> and <tt>range</tt> jointly in this way.)
-
-<h4>Code supplied</h4>
-
-To help you building this interpreter, we provide
-the basic structure (as a set of Java files together with a <tt>Makefile</tt>).
-
+<p>We also consider three built-in functions:
+<code>list(range(n))</code> builds the list
+<code>[0, 1, 2, ..., n-1]</code> and <code>len(l)</code> returns the
+length of list <code>l</code>. (We only use <code>list</code> and
+<code>range</code> jointly in this way.)</p>
+<h4>
+Code supplied
+</h4>
+<p>To help you building this interpreter, we provide the basic structure
+(as a set of Java files together with a <code>Makefile</code>).</p>
 <p>
 Download this archive:
 <a href="mini-python-java.tar.gz">mini-python-java.tar.gz</a>
 <p>
-
-Once uncompressed (with <tt>tar zxvf mini-python.tar.gz</tt>), you get
-a directory <tt>mini-python-java/</tt>.
-(If you use Eclipse, you can run it in the directory where
-<tt>mini-python-java/</tt> is, with the command <tt>eclipse -data .</tt>,
-then create a project <tt>mini-python-java</tt> and disable
-option <tt>Use default location</tt>.)
-This project contains a
-package <tt>mini_python</tt> with the following files:
+Once uncompressed (with <code>tar zxvf mini-python.tar.gz</code>), you
+get a directory <code>mini-python-java/</code>. (If you use Eclipse, you
+can run it in the directory where <code>mini-python-java/</code> is,
+with the command <code>eclipse -data .</code>, then create a project
+<code>mini-python-java</code> and disable option
+<code>Use default location</code>.) This project contains a package
+<code>mini_python</code> with the following files:
 <center>
 <table border="yes">
-<tr><td>Syntax.java <td> abstract syntax of <b>mini-Python</b> (complete)
-<tr><td>Lexer.java, MyLexer.java <td> lexical analysis (complete)
-<tr><td>parser.java, sym.java <td> parsing (complete)
-<tr><td>Interp.java <td> interpreter (<font color="red">to be completed</font>)
-<tr><td>Main.java <td> main file (complete)
-<tr><td>Makefile <td> to automate the build, if you don't use an IDE (complete)
+<tr>
+<td>
+Syntax.java
+<td>
+abstract syntax of <b>mini-Python</b> (complete)
+<tr>
+<td>
+Lexer.java, MyLexer.java
+<td>
+lexical analysis (complete)
+<tr>
+<td>
+parser.java, sym.java
+<td>
+parsing (complete)
+<tr>
+<td>
+Interp.java
+<td>
+interpreter (<font color="red">to be completed</font>)
+<tr>
+<td>
+Main.java
+<td>
+main file (complete)
+<tr>
+<td>
+Makefile
+<td>
+to automate the build, if you don’t use an IDE (complete)
 </table>
 <p>
 </center>
-The library <tt>java-cup-11a-runtime.jar</tt>, contained in sub-directory
-<tt>lib/</tt>, must be added to the project
-(with <tt>Java Build Path -> Libraries -> Add JARs</tt>).
-The code compiles but is incomplete.
-Places to be completed are indicated with <tt>throw new Todo()</tt>.
+The library <code>java-cup-11a-runtime.jar</code>, contained in
+sub-directory <code>lib/</code>, must be added to the project (with
+<code>Java Build Path -&gt; Libraries -&gt; Add JARs</code>). The code
+compiles but is incomplete. Places to be completed are indicated with
+<code>throw new Todo()</code>.
 <p>
-The executable takes a <b>mini-Python</b> file on the command line,
-with suffix <tt>.py</tt>. When it is absent, file <tt>test.py</tt> is used.
-
-<h4>Question 1. Arithmetic Expressions</h4>
-
-For the moment, we only consider arithmetic expressions without variables.
-Complete the interpreter to evaluate such expressions.
-Test on the following file
+<p>The executable takes a <b>mini-Python</b> file on the command line,
+with suffix <code>.py</code>. When it is absent, file
+<code>test.py</code> is used.</p>
+<h4>
+Question 1. Arithmetic Expressions
+</h4>
+For the moment, we only consider arithmetic expressions without
+variables. Complete the interpreter to evaluate such expressions. Test
+on the following file
 <pre>
 print(1 + 2*3)
 print((3*3 + 4*4) // 5)
@@ -119,40 +148,30 @@ whose output must be
 5
 3
 </pre>
-
-Division and modulus operations must signal a division by zero,
-by raising exception <tt>Error</tt>.
-
+<p>Division and modulus operations must signal a division by zero, by
+raising exception <code>Error</code>.</p>
 <p>
-
-To test, simply edit file <tt>test.py</tt> and run <tt>Main</tt>.
-
-<h4>Question 2. Boolean Expressions and Conditionals</h4>
-
-Complete methods <tt>isTrue</tt> and <tt>isFalse</tt> in class
-<tt>Value</tt>, which
-respectively decide whether a value is true or false.
-In Python, the value <tt>None</tt>, the Boolean <tt>False</tt>,
-the integer <tt>0</tt>, the empty string <tt>""</tt> and the empty list
-<tt>[]</tt> are all considered false, and any other value is
-considered true.
-
+<p>To test, simply edit file <code>test.py</code> and run
+<code>Main</code>.</p>
+<h4>
+Question 2. Boolean Expressions and Conditionals
+</h4>
+<p>Complete methods <code>isTrue</code> and <code>isFalse</code> in
+class <code>Value</code>, which respectively decide whether a value is
+true or false. In Python, the value <code>None</code>, the Boolean
+<code>False</code>, the integer <code>0</code>, the empty string
+<code>""</code> and the empty list <code>[]</code> are all considered
+false, and any other value is considered true.</p>
 <p>
-
-Then complete the interpreter with Boolean constants,
-arithmetic comparison and operations
-<tt>and</tt>, <tt>or</tt> and <tt>not</tt>.
-In Python, comparison is structural. You can use
-the method <tt>compareTo</tt> that is provided in
-class <tt>Value</tt>.
-
+<p>Then complete the interpreter with Boolean constants, arithmetic
+comparison and operations <code>and</code>, <code>or</code> and
+<code>not</code>. In Python, comparison is structural. You can use the
+method <code>compareTo</code> that is provided in class
+<code>Value</code>.</p>
 <p>
-
-Finally, complete the interpreter to handle the conditional
-(construction <tt>Sif</tt>).
-
+<p>Finally, complete the interpreter to handle the conditional
+(construction <code>Sif</code>).</p>
 <p>
-
 Test on the following file
 <pre>
 print(not True and 1//0==0)
@@ -168,34 +187,26 @@ False
 True
 ok
 </pre>
-
-<h4>Question 3. Variables</h4>
-
-To handle variables (global variables but also local variables and
-parameters) we are going to use an
-<i>environment</i>, which maps each known variable to its value.
-This table is the attribute <tt>vars</tt> of the class <tt>Interp</tt>.
-
+<h4>
+Question 3. Variables
+</h4>
+<p>To handle variables (global variables but also local variables and
+parameters) we are going to use an <i>environment</i>, which maps each
+known variable to its value. This table is the attribute
+<code>vars</code> of the class <code>Interp</code>.</p>
 <p>
-
-Complete the interpreter so that we can access variables
-(case <tt>Eident</tt>).
-Accessing a variable that is not in the map must raise an error.
-
+<p>Complete the interpreter so that we can access variables (case
+<code>Eident</code>). Accessing a variable that is not in the map must
+raise an error.</p>
 <p>
-
-Similarly, complete the interpreter so that we can assign a value to a
-variable (method <tt>visit(Sassign s)</tt>). This time, the variable
-may or may not be in the table. In the former case, its value is
-modified. In the latter case, it is added.
-
+<p>Similarly, complete the interpreter so that we can assign a value to
+a variable (method <code>visit(Sassign s)</code>). This time, the
+variable may or may not be in the table. In the former case, its value
+is modified. In the latter case, it is added.</p>
 <p>
-
-Finally, complete the interpreter so that we can concatenate two strings
-with operation <tt>+</tt>.
-
+<p>Finally, complete the interpreter so that we can concatenate two
+strings with operation <code>+</code>.</p>
 <p>
-
 Test on the following file
 <pre>
 x = 41
@@ -212,35 +223,27 @@ whose output must be
 False
 hello world!
 </pre>
-
-
-<h4>Question 4. Functions</h4>
-
-We now consider function definitions and calls.
-Functions are stored in the global hash table <tt>functions</tt>.
-Each function name is mapped to a pair consisting of
-the list of its parameters and its body (a statement).
-The code supplied is already filling this table with function definitions.
-
+<h4>
+Question 4. Functions
+</h4>
+<p>We now consider function definitions and calls. Functions are stored
+in the global hash table <code>functions</code>. Each function name is
+mapped to a pair consisting of the list of its parameters and its body
+(a statement). The code supplied is already filling this table with
+function definitions.</p>
 <p>
-
-Then complete the interpreter to handle function calls.
-For a call
-<tt>f(e1,...,en)</tt> to a function <tt>f</tt> defined as
-<tt>def f(x1,...,xn): s</tt>,
-we have to build a <i>new</i>
-environment that maps each formal parameter <tt>xi</tt> to the value of
-<tt>ei</tt>. This means building a new object of type <tt>Interp</tt>.
-Then we interpret
-the statement <tt>s</tt> (the body of the function) in this new
-environment.
-The statement <tt>return</tt> is interpreted using
-the Java exception <tt>Return</tt> (already defined).
-If the execution terminates without an explicit <tt>return</tt>, the
-value <tt>None</tt> must be returned.
-
+<p>Then complete the interpreter to handle function calls. For a call
+<code>f(e1,...,en)</code> to a function <code>f</code> defined as
+<code>def f(x1,...,xn): s</code>, we have to build a <i>new</i>
+environment that maps each formal parameter <code>xi</code> to the value
+of <code>ei</code>. This means building a new object of type
+<code>Interp</code>. Then we interpret the statement <code>s</code> (the
+body of the function) in this new environment. The statement
+<code>return</code> is interpreted using the Java exception
+<code>Return</code> (already defined). If the execution terminates
+without an explicit <code>return</code>, the value <code>None</code>
+must be returned.</p>
 <p>
-
 Test on the following file
 <pre>
 def fact(n):
@@ -253,64 +256,49 @@ whose output must be
 <pre>
 3628800
 </pre>
-
-
-<h4>Question 5. Lists</h4>
-
-Add support for lists. To do so,
-complete function <tt>expr</tt> so that we can concatenate
-two lists with operation <tt>+</tt>, to interpret calls
-to <tt>len</tt> (length of a list)
-and <tt>list(range(n))</tt> (the list <tt>[0, 1, 2, ..., n-1]</tt>),
-and to interpret expressions <tt>[e1, e2, ..., en]</tt> and
-<tt>e1[e2]</tt>.
-
+<h4>
+Question 5. Lists
+</h4>
+<p>Add support for lists. To do so, complete function <code>expr</code>
+so that we can concatenate two lists with operation <code>+</code>, to
+interpret calls to <code>len</code> (length of a list) and
+<code>list(range(n))</code> (the list <code>[0, 1, 2, ..., n-1]</code>),
+and to interpret expressions <code>[e1, e2, ..., en]</code> and
+<code>e1[e2]</code>.</p>
 <p>
-
-Complete function <tt>stmt</tt> to interpret
-the assignment of a list element (class <tt>Sset</tt>).
-
+<p>Complete function <code>stmt</code> to interpret the assignment of a
+list element (class <code>Sset</code>).</p>
 <p>
-
-Finally, complete function <tt>stmt</tt> to interpret the <tt>for</tt>
-loop. The statement <tt>for x in e: s</tt> successively assigns to the
-variable <tt>x</tt> the values of the list <tt>e</tt>, and executes
-the statement
-<tt>s</tt> for each of them. The expression <tt>e</tt> must be
-evaluated only once.
-
+<p>Finally, complete function <code>stmt</code> to interpret the
+<code>for</code> loop. The statement <code>for x in e: s</code>
+successively assigns to the variable <code>x</code> the values of the
+list <code>e</code>, and executes the statement <code>s</code> for each
+of them. The expression <code>e</code> must be evaluated only once.</p>
 <p>
-
-Test using the program at the beginning of this page. The output must be:
+Test using the program at the beginning of this page. The output must
+be:
 <pre>
 0
 1
 89
 267914296
 </pre>
-
-
-<h4>Question 6. Other tests</h4>
-
-Positive and negative tests are provided.
-To run your interpreter on these tests, launch <tt>make tests</tt>.
-
+<h4>
+Question 6. Other tests
+</h4>
+<p>Positive and negative tests are provided. To run your interpreter on
+these tests, launch <code>make tests</code>.</p>
 <div style="text-align:right">
-<a href="">solution</a>
+<p><a href="">solution</a></p>
 </div>
-
-<hr>
-
-<font size="-1"><a href="../../index.html">back to the main page</a></font>
-
-</body>
-</html>
-
+<hr />
 <!--
 Local Variables:
-ispell-local-dictionary: "american"
+compile-command: "pandoc -s -c ../style.css index-java.md -o index-java.html -A footer.html"
 End:
 -->
-
-<!--  LocalWords:  mini-Python
- -->
+<div id="footer">
+  <font size="-1"><a href="../index.html">back to the main page</a></font>
+</div>
+</body>
+</html>
