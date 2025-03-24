@@ -1,346 +1,350 @@
-<html>
-
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="stylesheet" type="text/css" href="../../style.css">
-<title>
-CSC_52064 - TD 2 - Mini-Python interpreter (in OCaml)
-</title>
-<style>
-tt {
-        color:blue;
-}
-pre {
-        color:blue;
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="" />
+  <title>ICL 2025 - LAB 3 - Mini-python interpreter (in OCaml)</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../style.css" />
 </head>
-
 <body>
-
-<h1>CSC_52064 - TD 2 -  Mini-Python interpreter (in OCaml)</h1>
-
-The goal of this lab is to build an interpreter for a simple fragment
-of Python, called <b>mini-Python</b>. You don't have to know Python.
-
-<p>
-
-To help you building this interpreter, we provide the basic structure
-(as a set of OCaml files together with <tt>Makefile</tt>
-and <tt>dune</tt>),
-to be downloaded here: <a href="mini-python.tar.gz">mini-python.tar.gz</a>.
-
-<p>
-
-Once uncompressed (with <tt>tar zxvf mini-python.tar.gz</tt>), you get
-a directory <tt>mini-python/</tt> with the following files:
+<header id="title-block-header">
+<h1 class="title">ICL 2025 - LAB 3 - Mini-python interpreter (in
+OCaml)</h1>
+<p class="author"></p>
+</header>
+<p>The goal of this lab is to build an interpreter for a simple fragment
+of Python, called <strong>mini-Python</strong>. You don’t have to know
+Python.</p>
+<p>To help you building this interpreter, we provide the basic structure
+(as a set of OCaml files together with <code>Makefile</code> and
+<code>dune</code>), to be downloaded here: <a
+href="mini-python.tar.gz">mini-python.tar.gz</a>.</p>
+<p>Once uncompressed (with <code>tar zxvf mini-python.tar.gz</code>),
+you get a directory <tt>mini-python/</tt> with the following files:</p>
 <center>
 <table border="yes">
-<tr><td>ast.ml <td> abstract syntax of <b>mini-Python</b> (complete)
-<tr><td>lexer.mll <td> lexical analysis (complete)
-<tr><td>parser.mly <td> parsing (complete)
-<tr><td>interp.ml <td> interpreter (<font color="red">to be completed</font>)
-<tr><td>minipython.ml <td> main file (complete)
-<tr><td>Makefile/dune <td> to automate the build (complete)
+<tr>
+<td>
+ast.ml
+<td>
+abstract syntax of <b>mini-Python</b> (complete)
+<tr>
+<td>
+lexer.mll
+<td>
+lexical analysis (complete)
+<tr>
+<td>
+parser.mly
+<td>
+parsing (complete)
+<tr>
+<td>
+interp.ml
+<td>
+interpreter (<font color="red">to be completed</font>)
+<tr>
+<td>
+minipython.ml
+<td>
+main file (complete)
+<tr>
+<td>
+Makefile/dune
+<td>
+to automate the build (complete)
 </table>
 </center>
-<p>
-The code compiles (run <tt>make</tt>, that launches
-<tt>dune build</tt>) but is incomplete.
-You have to complete <tt>interp.ml</tt>.
-<p>
-
-The executable takes a <b>mini-Python</b> file on the command line,
-with suffix <tt>.py</tt>. When it is absent, file <tt>test.py</tt> is used.
-When running <tt>make</tt>, the interpreter is run on file <tt>test.py</tt>.
-
-<p>
-
-A <b>mini-Python</b> file has the following structure:
-<pre>
-# zero, one or several function definitions at the beginning of the file
-def fibaux(a, b, k):
-    if k == 0:
-        return a
-    else:
-        return fibaux(b, a+b, k-1)
-
-def fib(n):
-    return fibaux(0, 1, n)
-
-# then one or several statements at the end of the file
-print("a few values of the Fibonacci sequence:")
-for n in [0, 1, 11, 42]:
-    print(fib(n))
-</pre>
-More generally, a <b>mini-Python</b> file is composed
-of an optional list of function definitions, followed by a list of statements.
-Caveat: the last statement must be followed by a newline.
-
-Statements are: assignment, conditional, loop
-(<tt>for</tt>), output with <tt>print</tt>, returning a value
-with <tt>return</tt>, and evaluation an expression.
-Expressions are: a constant (Boolean, integer, or string),
-access to a variable,
-building a list (with syntax <tt>[e1, e2,
-  ..., en]</tt>), access to a list element (with syntax
-notation <tt>e[i]</tt>), function call, or one of the operations
-<tt>+</tt>, <tt>-</tt>, <tt>*</tt>, <tt>//</tt>,
-<tt>==</tt>, <tt><></tt>, <tt><</tt>, <tt><=</tt>, <tt>></tt>,
-<tt>>=</tt>, <tt>and</tt>, <tt>or</tt> and <tt>not</tt>.
-
-<p>
-
-We also consider three built-in functions: <tt>list(range(n))</tt>
-builds the list <tt>[0, 1, 2, ..., n-1]</tt> and <tt>len(l)</tt>
-returns the length of list <tt>l</tt>. (We only use
-<tt>list</tt> and <tt>range</tt> jointly in this way.)
-
-<h4>Question 1. Arithmetic Expressions</h4>
-
-For the moment, we only consider arithmetic expressions without variables.
-Complete function <tt>expr</tt> to evaluate such
-expressions (and ignore argument <tt>ctx</tt> to function <tt>expr</tt>).
-
-<p>
-
-Test on the following file
-<pre>
-print(1 + 2*3)
-print((3*3 + 4*4) // 5)
-print(10-3-4)
-</pre>
-whose output must be
-<pre>
-7
-5
-3
-</pre>
-
-Division and modulus operations must signal a division by zero,
-using function <tt>error</tt> provided in file <tt>interp.ml</tt>.
-
-<p>
-
-To test, simply edit file <tt>test.py</tt> and
-run <tt>make</tt>. This recompiles the interpreter
-and runs it on file <tt>test.py</tt>.
-
-<h4>Question 2. Boolean Expressions and Conditionals</h4>
-
-Complete functions <tt>is_true</tt> and <tt>is_false</tt>, which
-respectively decide whether a value is true or false.
-In Python, the value <tt>None</tt>, the Boolean <tt>False</tt>,
-the integer <tt>0</tt>, the empty string <tt>""</tt> and the empty list
-<tt>[]</tt> are all considered false, and any other value is
-considered true.
-
-<p>
-
-Then complete function <tt>expr</tt> to interpret Boolean constants,
-arithmetic comparison and operations
-<tt>and</tt>, <tt>or</tt> and <tt>not</tt>.
-In Python, comparison is structural; you can use
-the structural comparison of OCaml to do so, that means using
-OCaml's operation <tt>&lt;</tt> on values of type <tt>value</tt>.
-(This is not 100% compatible with Python, but this will be addressed later.)
-
-<p>
-
-Finally, complete function <tt>stmt</tt>
-to interpret the conditional (construction <tt>Sif</tt>).
-
-<p>
-
-Test on the following file
-<pre>
-print(not True and 1//0==0)
-print(1<2)
-if False or True:
-    print("ok")
-else:
-    print("oups")
-</pre>
-whose output must be
-<pre>
-False
-True
-ok
-</pre>
-
-<h4>Question 3. Variables</h4>
-
-To handle variables (global variables but also local variables and
-parameters) we are going to use an
-<i>environment</i>, namely
-a hash table that is passed to functions
-<tt>expr</tt> and <tt>stmt</tt> under the name
-<tt>ctx</tt>. This table maps each known variable to its value.
-It is implemented by module <tt>Hashtbl</tt> from the OCaml standard
-library, and has type
-<pre>
-  (string, value) Hashtbl.t
-</pre>
-Complete function <tt>expr</tt> so that we can access variables.
-This is pattern <tt>Eident id</tt>.
-Accessing a variable that is not in the map must raise an error.
-
-<p>
-
-Similarly, complete function <tt>stmt</tt> so that we can assign a
-value to a variable.
-This is pattern <tt>Sassign (id, e1)</tt>. This time, the variable may
-or may not be in the table. In the former case, its value is modified.
-In the latter case, it is added.
-
-<p>
-
-Finally, complete function <tt>expr</tt> so that we can concatenate
-two strings with operation <tt>+</tt>.
-
-<p>
-
-Test on the following file
-<pre>
-x = 41
-x = x+1
-print(x)
-b = True and False
-print(b)
-s = "hello" + " world!"
-print(s)
-</pre>
-whose output must be
-<pre>
-42
-False
-hello world!
-</pre>
-
-
-<h4>Question 4. Functions</h4>
-
-We now consider function definitions and calls.
-Functions are stored in the following global hash table:
-<pre>
-let functions = (Hashtbl.create 17 : (string, ident list * stmt) Hashtbl.t)
-</pre>
-Each function name is mapped to a pair consisting of
-the list of its parameters and its body (a statement).
-Complete function <tt>file</tt> so that it fills this table
-with functions contained in list <tt>dl</tt>.
-
-<p>
-
-Then complete function <tt>expr</tt> and <tt>stmt</tt> to
-interpret a call to a function.
-For a call
-<tt>f(e1,...,en)</tt> to a function <tt>f</tt> defined as
-<tt>def f(x1,...,xn): body</tt>,
-we have to build a <i>new</i>
-environment that maps each formal parameter <tt>xi</tt> to the value of
-<tt>ei</tt>. Then we interpret
-the statement <tt>body</tt> (the body of the function) in this new
-environment.
-The statement <tt>return</tt> is interpreted using
-the OCaml exception <tt>Return</tt> (already defined).
-If the execution terminates without an explicit <tt>return</tt>, the
-value <tt>None</tt> must be returned.
-
-<p>
-
-Test on the following file
-<pre>
-def fact(n):
-    if n <= 1: return 1
-    return n * fact(n-1)
-
-print(fact(10))
-</pre>
-whose output must be
-<pre>
-3628800
-</pre>
-
-
-<h4>Question 5. Lists</h4>
-
-Add support for lists. To do so,
-complete function <tt>expr</tt> so that we can concatenate
-two lists with operation <tt>+</tt>, to interpret calls
-to <tt>len</tt> (length of a list)
-and <tt>list(range(n))</tt> (the list <tt>[0, 1, 2, ..., n-1]</tt>),
-and to interpret expressions <tt>[e1, e2, ..., en]</tt> and
-<tt>e1[e2]</tt>.
-
-<p>
-
-Complete function <tt>stmt</tt> to interpret
-the assignment of a list element
-(pattern <tt>Sset (e1, e2, e3)</tt>).
-
-<p>
-
-Finally, complete function <tt>stmt</tt> to interpret
-the <tt>for</tt> loop. The statement <tt>Sfor(x,e,s)</tt> successively
-assigns to the variable <tt>x</tt> the values of the list <tt>e</tt>,
-and executes the statement
-<tt>s</tt> for each of them. The expression <tt>e</tt> must be
-evaluated only once.
-
-<p>
-
-Test using the program at the beginning of this page. The output must be:
-<pre>
-0
-1
-89
-267914296
-</pre>
-
-
-<h4>Question 5. Other tests</h4>
-
-Positive and negative tests are provided.
-To run your interpreter on these tests, launch <tt>make tests</tt>.
-
-<h4>Question 6 (bonus). Structural Comparison</h4>
-
-On lists, the structural comparison of Python does not coincide with
-the OCaml structural comparison of values of type <tt>value array</tt>.
-Indeed, OCaml first compares lengths, then elements.
-As a consequence, OCaml declares that <tt>[|0;1;1|]</tt> is greater
-than <tt>[|1|]</tt>, while Python
-declares that <tt>[0,1,1]</tt> is smaller than
-<tt>[1]</tt> (lexicographic order).
-
-<p>
-
-Implement a function <tt>compare_value: value -> value -> int</tt>
-to compare two Python values. It returns a negative integer
-(resp. zero, resp. a positive integer) when the first value is smaller
-(resp. equal, resp. greater) than the second value.
-Use a Python interpreter as a reference to get the semantics right.
-Use <tt>compare_values</tt> to fix what your answer to question 2.
-
-<p>
-
-Do a few tests by yourself.
-
-
+<p>The code compiles (run <code>make</code>, that launches
+<code>dune build</code>) but is incomplete. You have to complete
+<code>interp.ml</code>.</p>
+<p>The executable takes a <strong>mini-Python</strong> file on the
+command line, with suffix
+<code>.py. When it is absent, file</code>test.py<code>is used. When running</code>make<code>, the interpreter is run on file</code>test.py`.</p>
+<p>A <strong>mini-Python</strong> file has the following structure:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># zero, one or several function definitions at the beginning of the file</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fibaux(a, b, k):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> k <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> a</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> fibaux(b, a<span class="op">+</span>b, k<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fib(n):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fibaux(<span class="dv">0</span>, <span class="dv">1</span>, n)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># then one or several statements at the end of the file</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;a few values of the Fibonacci sequence:&quot;</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">11</span>, <span class="dv">42</span>]:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(fib(n))</span></code></pre></div>
+<p>More generally, a <strong>mini-Python</strong> file is composed of an
+optional list of function definitions, followed by a list of statements.
+Caveat: the last statement must be followed by a newline.</p>
+<p>Statements are: assignment, conditional, loop (<code>for</code>),
+output with <code>print</code>, returning a value with
+<code>return</code>, and evaluation an expression. Expressions are: a
+constant (Boolean, integer, or string), access to a variable, building a
+list (with syntax <code>[e1, e2, ..., en]</code>), access to a list
+element (with syntax notation <code>e[i]</code>), function call, or one
+of the operations <code>+</code>, <code>-</code>, <code>*</code>,
+<code>//</code>, <code>==</code>, <code>&lt;&gt;</code>,
+<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>,
+<code>&gt;=</code>, <code>and</code>, <code>or</code> and
+<code>not</code>.</p>
+<p>We also consider three built-in functions:
+<code>list(range(n))</code> builds the list
+<code>[0, 1, 2, ..., n-1]</code> and <code>len(l)</code> returns the
+length of list <code>l</code>. (We only use <code>list</code> and
+<code>range</code> jointly in this way.)</p>
+<h2 id="exercise-1-arithmetic-expressions">Exercise 1: Arithmetic
+Expressions</h2>
+<p>For the moment, we only consider arithmetic expressions without
+variables. Complete function <code>expr</code> to evaluate such
+expressions (and ignore argument <code>ctx</code> to function
+<code>expr</code>).</p>
+<p>Test on the following file</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">1</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span><span class="dv">3</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((<span class="dv">3</span><span class="op">*</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">4</span><span class="op">*</span><span class="dv">4</span>) <span class="op">//</span> <span class="dv">5</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">10</span><span class="op">-</span><span class="dv">3</span><span class="op">-</span><span class="dv">4</span>)</span></code></pre></div>
+<p>whose output must be</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">7</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">5</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">3</span></span></code></pre></div>
+<p>Division and modulus operations must signal a division by zero, using
+function <code>error</code> provided in file <code>interp.ml</code>.</p>
+<p>To test, simply edit file <code>test.py</code> and run
+<code>make</code>. This recompiles the interpreter and runs it on file
+<code>test.py</code>.</p>
+<h2 id="exercise-2-boolean-expressions-and-conditionals">Exercise 2:
+Boolean Expressions and Conditionals</h2>
+<p>Complete functions <code>is_true</code> and <code>is_false</code>,
+which respectively decide whether a value is true or false. In Python,
+the value <code>None</code>, the Boolean <code>False</code>, the integer
+<code>0</code>, the empty string <code>""</code> and the empty list
+<code>[]</code> are all considered false, and any other value is
+considered true.</p>
+<p>Then complete function <code>expr</code> to interpret Boolean
+constants, arithmetic comparison and operations <code>and</code>,
+<code>or</code> and <code>not</code>. In Python, comparison is
+structural; you can use the structural comparison of OCaml to do so,
+that means using OCaml’s operation <code>&amp;lt;</code> on values of
+type <code>value</code>. (This is not 100% compatible with Python, but
+this will be addressed later.)</p>
+<p>Finally, complete function <code>stmt</code> to interpret the
+conditional (construction <code>Sif</code>).</p>
+<p>Test on the following file</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="kw">not</span> <span class="va">True</span> <span class="kw">and</span> <span class="dv">1</span><span class="op">//</span><span class="dv">0</span><span class="op">==</span><span class="dv">0</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">1</span><span class="op">&lt;</span><span class="dv">2</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">False</span> <span class="kw">or</span> <span class="va">True</span>:</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;ok&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;oups&quot;</span>)</span></code></pre></div>
+<p>whose output must be</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">False</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">True</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ok</span></code></pre></div>
+<h2 id="exercise-3-variables">Exercise 3: Variables</h2>
+<p>To handle variables (global variables but also local variables and
+parameters) we are going to use an <em>environment</em>, namely a hash
+table that is passed to functions <code>expr</code> and
+<code>stmt</code> under the name <code>ctx</code>. This table maps each
+known variable to its value. It is implemented by module
+<code>Hashtbl</code> from the OCaml standard library, and has type</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">string</span>, value) <span class="dt">Hashtbl</span>.t</span></code></pre></div>
+<p>Complete function <code>expr</code> so that we can access variables.
+This is pattern <code>Eident id</code>. Accessing a variable that is not
+in the map must raise an error.</p>
+<p>Similarly, complete function <code>stmt</code> so that we can assign
+a value to a variable. This is pattern <code>Sassign (id, e1)</code>.
+This time, the variable may or may not be in the table. In the former
+case, its value is modified. In the latter case, it is added.</p>
+<p>Finally, complete function <code>expr</code> so that we can
+concatenate two strings with operation <code>+</code>.</p>
+<p>Test on the following file:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">41</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x<span class="op">+</span><span class="dv">1</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="va">True</span> <span class="kw">and</span> <span class="va">False</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="st">&quot;hello&quot;</span> <span class="op">+</span> <span class="st">&quot; world!&quot;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(s)</span></code></pre></div>
+<p>whose output must be</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dv">42</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="va">False</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>hello world<span class="op">!</span></span></code></pre></div>
+<h2 id="exercise-4-functions">Exercise 4: Functions</h2>
+<p>We now consider function definitions and calls. Functions are stored
+in the following global hash table:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> functions = (<span class="dt">Hashtbl</span>.create <span class="dv">17</span> : (<span class="dt">string</span>, ident <span class="dt">list</span> * stmt) <span class="dt">Hashtbl</span>.t)</span></code></pre></div>
+<p>Each function name is mapped to a pair consisting of the list of its
+parameters and its body (a statement). Complete function
+<code>file</code> so that it fills this table with functions contained
+in list <code>dl</code>.</p>
+<p>Then complete function <code>expr</code> and <code>stmt</code> to
+interpret a call to a function. For a call <code>f(e1,...,en)</code> to
+a function <code>f</code> defined as
+<code>def f(x1,...,xn): body</code>, we have to build a <em>new</em>
+environment that maps each formal parameter <code>xi</code> to the value
+of <code>ei</code>. Then we interpret the statement <code>body</code>
+(the body of the function) in this new environment. The statement
+<code>return</code> is interpreted using the OCaml exception
+<code>Return</code> (already defined). If the execution terminates
+without an explicit <code>return</code>, the value <code>None</code>
+must be returned.</p>
+<p>Test on the following file</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fact(n):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n <span class="op">&lt;=</span> <span class="dv">1</span>: <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> n <span class="op">*</span> fact(n<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fact(<span class="dv">10</span>))</span></code></pre></div>
+<p>whose output must be</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">3628800</span></span></code></pre></div>
+<h2 id="exercise-5-lists">Exercise 5: Lists</h2>
+<p>Add support for lists. To do so, complete function <code>expr</code>
+so that we can concatenate two lists with operation <code>+</code>, to
+interpret calls to <code>len</code> (length of a list) and
+<code>list(range(n))</code> (the list <code>[0, 1, 2, ..., n-1]</code>),
+and to interpret expressions <code>[e1, e2, ..., en]</code> and
+<code>e1[e2]</code>.</p>
+<p>Complete function <code>stmt</code> to interpret the assignment of a
+list element (pattern <code>Sset (e1, e2, e3)</code>).</p>
+<p>Finally, complete function <code>stmt</code> to interpret the
+<code>for</code> loop. The statement <code>Sfor(x,e,s)</code>
+successively assigns to the variable <code>x</code> the values of the
+list <code>e</code>, and executes the statement <code>s</code> for each
+of them. The expression <code>e</code> must be evaluated only once.</p>
+<p>Test using the program at the beginning of this page. The output must
+be:</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">0</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">1</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="ex">89</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ex">267914296</span></span></code></pre></div>
+<h2 id="exercise-6-other-tests">Exercise 6: Other tests</h2>
+<p>Positive and negative tests are provided. To run your interpreter on
+these tests, launch <code>make tests</code>.</p>
+<h2 id="exercise-7-bonus-structural-comparison">Exercise 7 (bonus):
+Structural Comparison</h2>
+<p>On lists, the structural comparison of Python does not coincide with
+the OCaml structural comparison of values of type
+<code>value array</code>. Indeed, OCaml first compares lengths, then
+elements. As a consequence, OCaml declares that <code>[|0;1;1|]</code>
+is greater than <code>[|1|]</code>, while Python declares that
+<code>[0,1,1]</code> is smaller than <code>[1]</code> (lexicographic
+order).</p>
+<p>Implement a function
+<code>compare_value: value -&gt; value -&gt; int</code> to compare two
+Python values. It returns a negative integer (resp. zero, resp. a
+positive integer) when the first value is smaller (resp. equal, resp.
+greater) than the second value. Use a Python interpreter as a reference
+to get the semantics right. Use <code>compare_values</code> to fix what
+your answer to question 2.</p>
+<p>Do a few tests by yourself.</p>
 <div style="text-align:right">
-<a href="">solution</a>
+<p><a href="">solution</a></p>
 </div>
-
-<hr>
-
-<font size="-1"><a href="../../index.html">back to the main page</a></font>
-
-</body>
-</html>
-
+<hr />
 <!--
 Local Variables:
-ispell-local-dictionary: "american"
+compile-command: "pandoc -s -c ../style.css index.md -o index.html -A footer.html"
 End:
 -->
+<div id="footer">
+  <font size="-1"><a href="../index.html">back to the main page</a></font>
+</div>
+</body>
+</html>
