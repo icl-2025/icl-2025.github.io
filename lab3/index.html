@@ -181,6 +181,14 @@ of the operations <code>+</code>, <code>-</code>, <code>*</code>,
 <code>[0, 1, 2, ..., n-1]</code> and <code>len(l)</code> returns the
 length of list <code>l</code>. (We only use <code>list</code> and
 <code>range</code> jointly in this way.)</p>
+<p><em>Note</em>: <strong>mini-Python</strong> lists are actually
+mutable types, for instance, one can mutate the <code>i</code>-th
+element of a list <code>l</code> by doing <code>l[i] = v</code>. In our
+interpreter, <strong>mini-Python</strong> lists are encoded as OCaml
+arrays. You can find clear documentation on the use of arrays in the <a
+href="https://ocaml.org/docs/arrays">OCaml manual</a> or in the <a
+href="https://cs3110.github.io/textbook/chapters/mut/arrays.html">Michael
+Clarkson lectures</a>.</p>
 <h2 id="exercise-1-arithmetic-expressions">Exercise 1: Arithmetic
 Expressions</h2>
 <p>For the moment, we only consider arithmetic expressions without
@@ -241,6 +249,11 @@ known variable to its value. It is implemented by module
 <code>Hashtbl</code> from the OCaml standard library, and has type</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode ocaml"><code class="sourceCode ocaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  (<span class="dt">string</span>, value) <span class="dt">Hashtbl</span>.t</span></code></pre></div>
+<p>For more documentation on the use of hash tables, you are referred to
+the <a href="https://ocaml.org/docs/hash-tables">OCaml manual</a> or the
+<a
+href="https://cs3110.github.io/textbook/chapters/ds/hash_tables.html">Michael
+Clarkson lectures</a> on this data structure.</p>
 <p>Complete function <code>expr</code> so that we can access variables.
 This is pattern <code>Eident id</code>. Accessing a variable that is not
 in the map must raise an error.</p>
