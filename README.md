@@ -40,4 +40,6 @@ to do so.
 | 2    | 18 Mar | Pen-and-paper exercises on semantics |        |  [Lab 2](lab2/lab2.pdf) <br>[Bonus, in OCaml](lab2/bonus) <br> [Bonus, in Java](lab2/bonus_java)  |
 | 3    | 25 Mar | Lexical analysis  | [Lecture 3](lecture3.pdf)         |      |
 | 3    | 25 Mar | Mini-python interpreter |        |  [Lab 3, in OCaml](lab3/index) <br> [Lab 3, in Java](lab3/index-java)  |
+| 4    | 1 Apr | Parsing, part 1: top-down analyzers  | [Lecture 4](lecture4.pdf)         |      |
+| 4    | 1 Apr | Pen-and-paper exercises on context-free grammars and LL(1) parser |        |  [Lab 4](lab4/lab4.pdf)  |
 | ---- | ---- | ------ | ------ | ---- |
