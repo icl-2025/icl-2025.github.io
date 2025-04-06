@@ -1,0 +1,487 @@
+<!-- Generator: GNU source-highlight 3.1.9
+by Lorenzo Bettini
+http://www.lorenzobettini.it
+http://www.gnu.org/software/src-highlite -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+
+<head>
+<title>INF564 - Compilation</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<pre><tt><b><font color="#000080">package</font></b> mini_python<font color="#990000">;</font>
+
+<b><font color="#000080">import</font></b> java<font color="#990000">.</font>util<font color="#990000">.</font>HashMap<font color="#990000">;</font>
+<b><font color="#000080">import</font></b> java<font color="#990000">.</font>util<font color="#990000">.</font>Iterator<font color="#990000">;</font>
+
+<i><font color="#9A1900">/* Values of Mini-Python.</font></i>
+
+<i><font color="#9A1900">   Two main differences wrt Python:</font></i>
+
+<i><font color="#9A1900">   - We use here machine integers (Java type `long`) while Python</font></i>
+<i><font color="#9A1900">     integers are arbitrary-precision integers (we could use Java</font></i>
+<i><font color="#9A1900">     big integers but we opt for simplicity here).</font></i>
+
+<i><font color="#9A1900">   - What Python calls a ``list'' is a resizeable array. In Mini-Python,</font></i>
+<i><font color="#9A1900">     there is no way to modify the length, so a mere Java array can be used.</font></i>
+<i><font color="#9A1900">*/</font></i>
+
+<b><font color="#0000FF">abstract</font></b> <b><font color="#0000FF">class</font></b> <font color="#008080">Value</font> <b><font color="#0000FF">implements</font></b> Comparable<font color="#990000">&lt;</font>Value<font color="#990000">&gt;</font> <font color="#FF0000">{</font>
+  <b><font color="#0000FF">abstract</font></b> <font color="#009900">boolean</font> <b><font color="#000000">isFalse</font></b><font color="#990000">();</font>
+
+  <font color="#009900">boolean</font> <b><font color="#000000">isTrue</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">!</font><b><font color="#000000">isFalse</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+
+  <font color="#009900">long</font> <b><font color="#000000">asInt</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(!(</font><b><font color="#0000FF">this</font></b> <b><font color="#0000FF">instanceof</font></b> Vint<font color="#990000">))</font>
+      <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"integer expected"</font><font color="#990000">);</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">((</font>Vint<font color="#990000">)</font> <b><font color="#0000FF">this</font></b><font color="#990000">).</font>n<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  <font color="#008080">Vlist</font> <b><font color="#000000">asList</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(!(</font><b><font color="#0000FF">this</font></b> <b><font color="#0000FF">instanceof</font></b> Vlist<font color="#990000">))</font>
+      <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"list expected"</font><font color="#990000">);</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">(</font>Vlist<font color="#990000">)</font> <b><font color="#0000FF">this</font></b><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">Vnone</font> <b><font color="#0000FF">extends</font></b> Value <font color="#FF0000">{</font>
+  @Override
+  <font color="#009900">boolean</font> <b><font color="#000000">isFalse</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">true</font></b><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#008080">String</font> <b><font color="#000000">toString</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <font color="#FF0000">"None"</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">int</font> <b><font color="#000000">compareTo</font></b><font color="#990000">(</font><font color="#008080">Value</font> o<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> o <font color="#008080">instanceof</font> Vnone <font color="#990000">?</font> <font color="#993399">0</font> <font color="#990000">:</font> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">Vbool</font> <b><font color="#0000FF">extends</font></b> Value <font color="#FF0000">{</font>
+  <b><font color="#0000FF">final</font></b> <font color="#009900">boolean</font> b<font color="#990000">;</font>
+
+  <b><font color="#000000">Vbool</font></b><font color="#990000">(</font><font color="#009900">boolean</font> b<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>b <font color="#990000">=</font> b<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#008080">String</font> <b><font color="#000000">toString</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>b <font color="#990000">?</font> <font color="#FF0000">"True"</font> <font color="#990000">:</font> <font color="#FF0000">"False"</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <font color="#009900">boolean</font> <b><font color="#000000">isFalse</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">!</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font>b<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">int</font> <b><font color="#000000">compareTo</font></b><font color="#990000">(</font><font color="#008080">Value</font> o<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>o <font color="#008080">instanceof</font> Vnone<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <font color="#993399">1</font><font color="#990000">;</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>o <font color="#008080">instanceof</font> Vbool<font color="#990000">)</font> <font color="#FF0000">{</font>
+      <font color="#009900">boolean</font> ob <font color="#990000">=</font> <font color="#990000">((</font>Vbool<font color="#990000">)</font> o<font color="#990000">).</font>b<font color="#990000">;</font>
+      <b><font color="#0000FF">return</font></b> b <font color="#990000">?</font> <font color="#990000">(</font>ob <font color="#990000">?</font> <font color="#993399">0</font> <font color="#990000">:</font> <font color="#993399">1</font><font color="#990000">)</font> <font color="#990000">:</font> <font color="#990000">(</font>ob <font color="#990000">?</font> <font color="#990000">-</font><font color="#993399">1</font> <font color="#990000">:</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">Vint</font> <b><font color="#0000FF">extends</font></b> Value <font color="#FF0000">{</font>
+  <b><font color="#0000FF">final</font></b> <font color="#009900">long</font> n<font color="#990000">;</font>
+
+  <b><font color="#000000">Vint</font></b><font color="#990000">(</font><font color="#009900">long</font> n<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>n <font color="#990000">=</font> n<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#008080">String</font> <b><font color="#000000">toString</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <font color="#FF0000">""</font> <font color="#990000">+</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>n<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <font color="#009900">boolean</font> <b><font color="#000000">isFalse</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>n <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">int</font> <b><font color="#000000">compareTo</font></b><font color="#990000">(</font><font color="#008080">Value</font> o<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>o <font color="#008080">instanceof</font> Vnone <font color="#990000">||</font> o <font color="#008080">instanceof</font> Vbool<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <font color="#993399">1</font><font color="#990000">;</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>o <font color="#008080">instanceof</font> Vint<font color="#990000">)</font> <font color="#FF0000">{</font>
+      <font color="#009900">long</font> d <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>n <font color="#990000">-</font> o<font color="#990000">.</font><b><font color="#000000">asInt</font></b><font color="#990000">();</font>
+      <b><font color="#0000FF">return</font></b> d <font color="#990000">&lt;</font> <font color="#993399">0</font> <font color="#990000">?</font> <font color="#990000">-</font><font color="#993399">1</font> <font color="#990000">:</font> d <font color="#990000">&gt;</font> <font color="#993399">0</font> <font color="#990000">?</font> <font color="#993399">1</font> <font color="#990000">:</font> <font color="#993399">0</font><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">Vstring</font> <b><font color="#0000FF">extends</font></b> Value <font color="#FF0000">{</font>
+  <b><font color="#0000FF">final</font></b> <font color="#008080">String</font> s<font color="#990000">;</font>
+
+  <b><font color="#000000">Vstring</font></b><font color="#990000">(</font><font color="#008080">String</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>s <font color="#990000">=</font> s<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#008080">String</font> <b><font color="#000000">toString</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>s<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <font color="#009900">boolean</font> <b><font color="#000000">isFalse</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>s<font color="#990000">.</font><b><font color="#000000">length</font></b><font color="#990000">()</font> <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">int</font> <b><font color="#000000">compareTo</font></b><font color="#990000">(</font><font color="#008080">Value</font> o<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>o <font color="#008080">instanceof</font> Vnone <font color="#990000">||</font> o <font color="#008080">instanceof</font> Vbool <font color="#990000">||</font> o <font color="#008080">instanceof</font> Vint<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <font color="#993399">1</font><font color="#990000">;</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>o <font color="#008080">instanceof</font> Vstring<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>s<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(((</font>Vstring<font color="#990000">)</font> o<font color="#990000">).</font>s<font color="#990000">);</font>
+    <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">Vlist</font> <b><font color="#0000FF">extends</font></b> Value <font color="#FF0000">{</font>
+  <b><font color="#0000FF">final</font></b> Value<font color="#990000">[]</font> l<font color="#990000">;</font>
+
+  <b><font color="#000000">Vlist</font></b><font color="#990000">(</font><font color="#009900">int</font> n<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>l <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> Value<font color="#990000">[</font>n<font color="#990000">];</font>
+  <font color="#FF0000">}</font>
+
+  <b><font color="#000000">Vlist</font></b><font color="#990000">(</font>Value<font color="#990000">[]</font> l1<font color="#990000">,</font> Value<font color="#990000">[]</font> l2<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>l <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> Value<font color="#990000">[</font>l1<font color="#990000">.</font>length <font color="#990000">+</font> l2<font color="#990000">.</font>length<font color="#990000">];</font>
+    System<font color="#990000">.</font><b><font color="#000000">arraycopy</font></b><font color="#990000">(</font>l1<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">,</font> l<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">,</font> l1<font color="#990000">.</font>length<font color="#990000">);</font>
+    System<font color="#990000">.</font><b><font color="#000000">arraycopy</font></b><font color="#990000">(</font>l2<font color="#990000">,</font> <font color="#993399">0</font><font color="#990000">,</font> l<font color="#990000">,</font> l1<font color="#990000">.</font>length<font color="#990000">,</font> l2<font color="#990000">.</font>length<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#008080">String</font> <b><font color="#000000">toString</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <font color="#008080">StringBuffer</font> b <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">StringBuffer</font></b><font color="#990000">();</font>
+    b<font color="#990000">.</font><b><font color="#000000">append</font></b><font color="#990000">(</font><font color="#FF0000">"["</font><font color="#990000">);</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">int</font> i <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>l<font color="#990000">.</font>length<font color="#990000">;</font> i<font color="#990000">++)</font> <font color="#FF0000">{</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i <font color="#990000">!=</font> <font color="#993399">0</font><font color="#990000">)</font>
+        b<font color="#990000">.</font><b><font color="#000000">append</font></b><font color="#990000">(</font><font color="#FF0000">", "</font><font color="#990000">);</font>
+      b<font color="#990000">.</font><b><font color="#000000">append</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">.</font>l<font color="#990000">[</font>i<font color="#990000">]);</font>
+    <font color="#FF0000">}</font>
+    b<font color="#990000">.</font><b><font color="#000000">append</font></b><font color="#990000">(</font><font color="#FF0000">"]"</font><font color="#990000">);</font>
+    <b><font color="#0000FF">return</font></b> b<font color="#990000">.</font><b><font color="#000000">toString</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <font color="#009900">boolean</font> <b><font color="#000000">isFalse</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>l<font color="#990000">.</font>length <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">int</font> <b><font color="#000000">compareTo</font></b><font color="#990000">(</font><font color="#008080">Value</font> o<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(!(</font>o <font color="#008080">instanceof</font> Vlist<font color="#990000">))</font>
+      <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+    Value<font color="#990000">[]</font> ol <font color="#990000">=</font> <font color="#990000">((</font>Vlist<font color="#990000">)</font> o<font color="#990000">).</font>l<font color="#990000">;</font>
+    <font color="#009900">int</font> n1 <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>l<font color="#990000">.</font>length<font color="#990000">,</font> n2 <font color="#990000">=</font> ol<font color="#990000">.</font>length<font color="#990000">;</font>
+    <font color="#009900">int</font> i1 <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">,</font> i2 <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(;</font> i1 <font color="#990000">&lt;</font> n1 <font color="#990000">&amp;&amp;</font> i2 <font color="#990000">&lt;</font> n2<font color="#990000">;</font> i1<font color="#990000">++,</font> i2<font color="#990000">++)</font> <font color="#FF0000">{</font>
+      <font color="#008080">Value</font> v1 <font color="#990000">=</font> <b><font color="#0000FF">this</font></b><font color="#990000">.</font>l<font color="#990000">[</font>i1<font color="#990000">];</font>
+      <font color="#008080">Value</font> v2 <font color="#990000">=</font> ol<font color="#990000">[</font>i2<font color="#990000">];</font>
+      <font color="#009900">int</font> c <font color="#990000">=</font> v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">);</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>c <font color="#990000">!=</font> <font color="#993399">0</font><font color="#990000">)</font>
+        <b><font color="#0000FF">return</font></b> c<font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i1 <font color="#990000">&lt;</font> n1<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <font color="#993399">1</font><font color="#990000">;</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i2 <font color="#990000">&lt;</font> n2<font color="#990000">)</font>
+      <b><font color="#0000FF">return</font></b> <font color="#990000">-</font><font color="#993399">1</font><font color="#990000">;</font>
+    <b><font color="#0000FF">return</font></b> <font color="#993399">0</font><font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/* The following exception is used to interpret Python's `return`.</font></i>
+
+<i><font color="#9A1900">   Note: this is an unchecked exception, so that we don't have to</font></i>
+<i><font color="#9A1900">   add `throws` declarations to the visitor methods. */</font></i>
+<b><font color="#0000FF">class</font></b> <font color="#008080">Return</font> <b><font color="#0000FF">extends</font></b> RuntimeException <font color="#FF0000">{</font>
+  <b><font color="#0000FF">private</font></b> <b><font color="#0000FF">static</font></b> <b><font color="#0000FF">final</font></b> <font color="#009900">long</font> serialVersionUID <font color="#990000">=</font> <font color="#993399">1L</font><font color="#990000">;</font>
+
+  <b><font color="#0000FF">final</font></b> <font color="#008080">Value</font> v<font color="#990000">;</font>
+
+  <b><font color="#000000">Return</font></b><font color="#990000">(</font><font color="#008080">Value</font> v<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>v <font color="#990000">=</font> v<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+
+<i><font color="#9A1900">/* The interpreter starts here */</font></i>
+
+<b><font color="#0000FF">class</font></b> <font color="#008080">Interp</font> <b><font color="#0000FF">implements</font></b> Visitor <font color="#FF0000">{</font>
+
+  <i><font color="#9A1900">/* The visitor methods do not return values (they have a `void` type).</font></i>
+
+<i><font color="#9A1900">     So, to return values when evaluating a constant or an expression,</font></i>
+<i><font color="#9A1900">     we use the following wrappers `evalConstant` and `evalExpr`.</font></i>
+<i><font color="#9A1900">     They call `accept` and the visitor assigns the variable `value`. */</font></i>
+  <font color="#008080">Value</font> value <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+
+  <font color="#008080">Value</font> <b><font color="#000000">evalConstant</font></b><font color="#990000">(</font><font color="#008080">Constant</font> c<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">assert</font></b> value <font color="#990000">==</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font> <i><font color="#9A1900">// check for non-reentrance</font></i>
+    c<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+    <font color="#008080">Value</font> v <font color="#990000">=</font> value<font color="#990000">;</font>
+    value <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">return</font></b> v<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+  <font color="#008080">Value</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font><font color="#008080">Expr</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">assert</font></b> value <font color="#990000">==</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font> <i><font color="#9A1900">// check for non-reentrance</font></i>
+    e<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+    <font color="#008080">Value</font> v <font color="#990000">=</font> value<font color="#990000">;</font>
+    value <font color="#990000">=</font> <b><font color="#0000FF">null</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">return</font></b> v<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Cnone</font> c<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vnone</font></b><font color="#990000">();</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Cbool</font> c<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>c<font color="#990000">.</font>b<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Cstring</font> c<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vstring</font></b><font color="#990000">(</font>c<font color="#990000">.</font>s<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Cint</font> c<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>c<font color="#990000">.</font>n<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  <i><font color="#9A1900">// local variables</font></i>
+  <font color="#008080">HashMap&lt;String, Value&gt;</font> vars<font color="#990000">;</font>
+
+  <b><font color="#000000">Interp</font></b><font color="#990000">()</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>vars <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> HashMap<font color="#990000">&lt;</font>String<font color="#990000">,</font> Value<font color="#990000">&gt;();</font>
+  <font color="#FF0000">}</font>
+
+  <i><font color="#9A1900">// functions definitions (functions are global, hence `static`)</font></i>
+  <b><font color="#0000FF">static</font></b> <font color="#008080">HashMap&lt;String, Def&gt;</font> functions <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> HashMap<font color="#990000">&lt;</font>String<font color="#990000">,</font> Def<font color="#990000">&gt;();</font>
+
+  <i><font color="#9A1900">// binary operators</font></i>
+  <b><font color="#0000FF">static</font></b> <font color="#008080">Value</font> <b><font color="#000000">binop</font></b><font color="#990000">(</font><font color="#008080">Binop</font> op<font color="#990000">,</font> <font color="#008080">Value</font> v1<font color="#990000">,</font> <font color="#008080">Value</font> v2<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">switch</font></b> <font color="#990000">(</font>op<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">case</font></b> Bsub<font color="#990000">:</font>
+    <b><font color="#0000FF">case</font></b> Bmul<font color="#990000">:</font>
+    <b><font color="#0000FF">case</font></b> Bdiv<font color="#990000">:</font>
+    <b><font color="#0000FF">case</font></b> Bmod<font color="#990000">:</font>
+      <font color="#009900">long</font> i1 <font color="#990000">=</font> v1<font color="#990000">.</font><b><font color="#000000">asInt</font></b><font color="#990000">();</font>
+      <font color="#009900">long</font> i2 <font color="#990000">=</font> v2<font color="#990000">.</font><b><font color="#000000">asInt</font></b><font color="#990000">();</font>
+      <b><font color="#0000FF">switch</font></b> <font color="#990000">(</font>op<font color="#990000">)</font> <font color="#FF0000">{</font>
+      <b><font color="#0000FF">case</font></b> Bsub<font color="#990000">:</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>i1 <font color="#990000">-</font> i2<font color="#990000">);</font>
+      <b><font color="#0000FF">case</font></b> Bmul<font color="#990000">:</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>i1 <font color="#990000">*</font> i2<font color="#990000">);</font>
+      <b><font color="#0000FF">case</font></b> Bdiv<font color="#990000">:</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i2 <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">)</font>
+          <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"division by zero"</font><font color="#990000">);</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>i1 <font color="#990000">/</font> i2<font color="#990000">);</font>
+      <b><font color="#0000FF">case</font></b> Bmod<font color="#990000">:</font>
+        <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i2 <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">)</font>
+          <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"division by zero"</font><font color="#990000">);</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>i1 <font color="#990000">%</font> i2<font color="#990000">);</font>
+      <b><font color="#0000FF">default</font></b><font color="#990000">:</font>
+      <font color="#FF0000">}</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">case</font></b> Badd<font color="#990000">:</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>v1 <font color="#008080">instanceof</font> Vint <font color="#990000">&amp;&amp;</font> v2 <font color="#008080">instanceof</font> Vint<font color="#990000">)</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">asInt</font></b><font color="#990000">()</font> <font color="#990000">+</font> v2<font color="#990000">.</font><b><font color="#000000">asInt</font></b><font color="#990000">());</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>v1 <font color="#008080">instanceof</font> Vstring <font color="#990000">&amp;&amp;</font> v2 <font color="#008080">instanceof</font> Vstring<font color="#990000">)</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vstring</font></b><font color="#990000">(((</font>Vstring<font color="#990000">)</font> v1<font color="#990000">).</font>s <font color="#990000">+</font> <font color="#990000">((</font>Vstring<font color="#990000">)</font> v2<font color="#990000">).</font>s<font color="#990000">);</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>v1 <font color="#008080">instanceof</font> Vlist <font color="#990000">&amp;&amp;</font> v2 <font color="#008080">instanceof</font> Vlist<font color="#990000">)</font>
+        <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vlist</font></b><font color="#990000">(((</font>Vlist<font color="#990000">)</font> v1<font color="#990000">).</font>l<font color="#990000">,</font> <font color="#990000">((</font>Vlist<font color="#990000">)</font> v2<font color="#990000">).</font>l<font color="#990000">);</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">case</font></b> Beq<font color="#990000">:</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">)</font> <font color="#990000">==</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">case</font></b> Bneq<font color="#990000">:</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">)</font> <font color="#990000">!=</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">case</font></b> Blt<font color="#990000">:</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">)</font> <font color="#990000">&lt;</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">case</font></b> Ble<font color="#990000">:</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">)</font> <font color="#990000">&lt;=</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">case</font></b> Bgt<font color="#990000">:</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">)</font> <font color="#990000">&gt;</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">case</font></b> Bge<font color="#990000">:</font>
+      <b><font color="#0000FF">return</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font>v1<font color="#990000">.</font><b><font color="#000000">compareTo</font></b><font color="#990000">(</font>v2<font color="#990000">)</font> <font color="#990000">&gt;=</font> <font color="#993399">0</font><font color="#990000">);</font>
+    <b><font color="#0000FF">default</font></b><font color="#990000">:</font>
+    <font color="#FF0000">}</font>
+    <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"unsupported operand types"</font><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  <i><font color="#9A1900">// interpreting expressions</font></i>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Ecst</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#000000">evalConstant</font></b><font color="#990000">(</font>e<font color="#990000">.</font>c<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Ebinop</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#008080">Value</font> v1 <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e1<font color="#990000">);</font>
+    <b><font color="#0000FF">switch</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>op<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">case</font></b> Band<font color="#990000">:</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> v1<font color="#990000">.</font><b><font color="#000000">isTrue</font></b><font color="#990000">()</font> <font color="#990000">?</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e2<font color="#990000">)</font> <font color="#990000">:</font> v1<font color="#990000">;</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">case</font></b> Bor<font color="#990000">:</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> v1<font color="#990000">.</font><b><font color="#000000">isFalse</font></b><font color="#990000">()</font> <font color="#990000">?</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e2<font color="#990000">)</font> <font color="#990000">:</font> v1<font color="#990000">;</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">default</font></b><font color="#990000">:</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#000000">binop</font></b><font color="#990000">(</font>e<font color="#990000">.</font>op<font color="#990000">,</font> v1<font color="#990000">,</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e2<font color="#990000">));</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Eunop</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">switch</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>op<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">case</font></b> Unot<font color="#990000">:</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vbool</font></b><font color="#990000">(</font><b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e<font color="#990000">).</font><b><font color="#000000">isFalse</font></b><font color="#990000">());</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">case</font></b> Uneg<font color="#990000">:</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(-</font><b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e<font color="#990000">).</font><b><font color="#000000">asInt</font></b><font color="#990000">());</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Ecall</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">switch</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>f<font color="#990000">.</font>id<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">case</font></b> <font color="#FF0000">"len"</font><font color="#990000">:</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">()</font> <font color="#990000">!=</font> <font color="#993399">1</font><font color="#990000">)</font>
+        <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"bad arity"</font><font color="#990000">);</font>
+      <font color="#008080">Value</font> v <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">));</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>v <font color="#008080">instanceof</font> Vstring<font color="#990000">)</font>
+        <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(((</font>Vstring<font color="#990000">)</font> v<font color="#990000">).</font>s<font color="#990000">.</font><b><font color="#000000">length</font></b><font color="#990000">());</font>
+      <b><font color="#0000FF">else</font></b> <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>v <font color="#008080">instanceof</font> Vlist<font color="#990000">)</font>
+        <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(((</font>Vlist<font color="#990000">)</font> v<font color="#990000">).</font>l<font color="#990000">.</font>length<font color="#990000">);</font>
+      <b><font color="#0000FF">else</font></b>
+        <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"this value has no 'len'"</font><font color="#990000">);</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">case</font></b> <font color="#FF0000">"list"</font><font color="#990000">:</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">()</font> <font color="#990000">!=</font> <font color="#993399">1</font><font color="#990000">)</font>
+        <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"bad arity"</font><font color="#990000">);</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">));</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">case</font></b> <font color="#FF0000">"range"</font><font color="#990000">:</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">()</font> <font color="#990000">!=</font> <font color="#993399">1</font><font color="#990000">)</font>
+        <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"bad arity"</font><font color="#990000">);</font>
+      <font color="#009900">long</font> n <font color="#990000">=</font> Math<font color="#990000">.</font><b><font color="#000000">max</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">,</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font><font color="#993399">0</font><font color="#990000">)).</font><b><font color="#000000">asInt</font></b><font color="#990000">());</font>
+      <font color="#008080">Vlist</font> l <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vlist</font></b><font color="#990000">((</font><font color="#009900">int</font><font color="#990000">)</font>n<font color="#990000">);</font>
+      <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#009900">int</font> i <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font> i <font color="#990000">&lt;</font> n<font color="#990000">;</font> i<font color="#990000">++)</font>
+        l<font color="#990000">.</font>l<font color="#990000">[</font>i<font color="#990000">]</font> <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vint</font></b><font color="#990000">(</font>i<font color="#990000">);</font>
+      <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> l<font color="#990000">;</font>
+      <b><font color="#0000FF">break</font></b><font color="#990000">;</font>
+    <b><font color="#0000FF">default</font></b><font color="#990000">:</font>
+      <font color="#008080">Def</font> d <font color="#990000">=</font> functions<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font>e<font color="#990000">.</font>f<font color="#990000">.</font>id<font color="#990000">);</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>d <font color="#990000">==</font> <b><font color="#0000FF">null</font></b><font color="#990000">)</font>
+        <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"unbound function "</font> <font color="#990000">+</font> e<font color="#990000">.</font>f<font color="#990000">.</font>id<font color="#990000">);</font>
+      <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">()</font> <font color="#990000">!=</font> d<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">())</font>
+        <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"bad arity"</font><font color="#990000">);</font>
+      <font color="#008080">Interp</font> ctxf <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Interp</font></b><font color="#990000">();</font>
+      <font color="#008080">Iterator&lt;Ident&gt;</font> it <font color="#990000">=</font> d<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">iterator</font></b><font color="#990000">();</font>
+      <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#008080">Expr</font> e1 <font color="#990000">:</font> e<font color="#990000">.</font>l<font color="#990000">)</font>
+        ctxf<font color="#990000">.</font>vars<font color="#990000">.</font><b><font color="#000000">put</font></b><font color="#990000">(</font>it<font color="#990000">.</font><b><font color="#000000">next</font></b><font color="#990000">().</font>id<font color="#990000">,</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e1<font color="#990000">));</font>
+      <b><font color="#0000FF">try</font></b> <font color="#FF0000">{</font>
+        d<font color="#990000">.</font>s<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font>ctxf<font color="#990000">);</font>
+        <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vnone</font></b><font color="#990000">();</font>
+      <font color="#FF0000">}</font> <b><font color="#0000FF">catch</font></b> <font color="#990000">(</font><font color="#008080">Return</font> r<font color="#990000">)</font> <font color="#FF0000">{</font>
+        <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> r<font color="#990000">.</font>v<font color="#990000">;</font>
+      <font color="#FF0000">}</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Elist</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#008080">Vlist</font> v <font color="#990000">=</font> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Vlist</font></b><font color="#990000">(</font>e<font color="#990000">.</font>l<font color="#990000">.</font><b><font color="#000000">size</font></b><font color="#990000">());</font>
+    <font color="#009900">int</font> i <font color="#990000">=</font> <font color="#993399">0</font><font color="#990000">;</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#008080">Expr</font> e1 <font color="#990000">:</font> e<font color="#990000">.</font>l<font color="#990000">)</font>
+      v<font color="#990000">.</font>l<font color="#990000">[</font>i<font color="#990000">++]</font> <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e1<font color="#990000">);</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> v<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Eident</font> id<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#008080">Value</font> v <font color="#990000">=</font> vars<font color="#990000">.</font><b><font color="#000000">get</font></b><font color="#990000">(</font>id<font color="#990000">.</font>x<font color="#990000">.</font>id<font color="#990000">);</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>v <font color="#990000">==</font> <b><font color="#0000FF">null</font></b><font color="#990000">)</font>
+      <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"unbound variable "</font> <font color="#990000">+</font> id<font color="#990000">.</font>x<font color="#990000">.</font>id<font color="#990000">);</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> v<font color="#990000">;</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Eget</font> e<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#008080">Vlist</font> v <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e1<font color="#990000">).</font><b><font color="#000000">asList</font></b><font color="#990000">();</font>
+    <font color="#009900">long</font> i <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>e<font color="#990000">.</font>e2<font color="#990000">).</font><b><font color="#000000">asInt</font></b><font color="#990000">();</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i <font color="#990000">&lt;</font> <font color="#993399">0</font> <font color="#990000">||</font> i <font color="#990000">&gt;=</font> v<font color="#990000">.</font>l<font color="#990000">.</font>length<font color="#990000">)</font>
+      <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"index out of bounds"</font><font color="#990000">);</font>
+    <b><font color="#0000FF">this</font></b><font color="#990000">.</font>value <font color="#990000">=</font> v<font color="#990000">.</font>l<font color="#990000">[(</font><font color="#009900">int</font><font color="#990000">)</font>i<font color="#990000">];</font>
+  <font color="#FF0000">}</font>
+
+  <i><font color="#9A1900">// interpreting statements</font></i>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sset</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#008080">Vlist</font> v <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e1<font color="#990000">).</font><b><font color="#000000">asList</font></b><font color="#990000">();</font>
+    <font color="#009900">long</font> i <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e2<font color="#990000">).</font><b><font color="#000000">asInt</font></b><font color="#990000">();</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font>i <font color="#990000">&lt;</font> <font color="#993399">0</font> <font color="#990000">||</font> i <font color="#990000">&gt;=</font> v<font color="#990000">.</font>l<font color="#990000">.</font>length<font color="#990000">)</font>
+      <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Error</font></b><font color="#990000">(</font><font color="#FF0000">"index out of bounds"</font><font color="#990000">);</font>
+    v<font color="#990000">.</font>l<font color="#990000">[(</font><font color="#009900">int</font><font color="#990000">)</font>i<font color="#990000">]</font> <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e3<font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sif</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">if</font></b> <font color="#990000">(</font><b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e<font color="#990000">).</font><b><font color="#000000">isTrue</font></b><font color="#990000">())</font>
+      s<font color="#990000">.</font>s1<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+    <b><font color="#0000FF">else</font></b>
+      s<font color="#990000">.</font>s2<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sreturn</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">throw</font></b> <b><font color="#0000FF">new</font></b> <b><font color="#000000">Return</font></b><font color="#990000">(</font><b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e<font color="#990000">));</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sassign</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    vars<font color="#990000">.</font><b><font color="#000000">put</font></b><font color="#990000">(</font>s<font color="#990000">.</font>x<font color="#990000">.</font>id<font color="#990000">,</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e<font color="#990000">));</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sprint</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    System<font color="#990000">.</font>out<font color="#990000">.</font><b><font color="#000000">println</font></b><font color="#990000">(</font><b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e<font color="#990000">).</font><b><font color="#000000">toString</font></b><font color="#990000">());</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sblock</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#008080">Stmt</font> st<font color="#990000">:</font> s<font color="#990000">.</font>l<font color="#990000">)</font>
+      st<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Sfor</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    <font color="#008080">Vlist</font> l <font color="#990000">=</font> <b><font color="#000000">evalExpr</font></b><font color="#990000">(</font>s<font color="#990000">.</font>e<font color="#990000">).</font><b><font color="#000000">asList</font></b><font color="#990000">();</font>
+    <b><font color="#0000FF">for</font></b> <font color="#990000">(</font><font color="#008080">Value</font> v<font color="#990000">:</font> l<font color="#990000">.</font>l<font color="#990000">)</font> <font color="#FF0000">{</font>
+      vars<font color="#990000">.</font><b><font color="#000000">put</font></b><font color="#990000">(</font>s<font color="#990000">.</font>x<font color="#990000">.</font>id<font color="#990000">,</font> v<font color="#990000">);</font>
+      s<font color="#990000">.</font>s<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+    <font color="#FF0000">}</font>
+  <font color="#FF0000">}</font>
+
+  @Override
+  <b><font color="#0000FF">public</font></b> <font color="#009900">void</font> <b><font color="#000000">visit</font></b><font color="#990000">(</font><font color="#008080">Seval</font> s<font color="#990000">)</font> <font color="#FF0000">{</font>
+    s<font color="#990000">.</font>e<font color="#990000">.</font><b><font color="#000000">accept</font></b><font color="#990000">(</font><b><font color="#0000FF">this</font></b><font color="#990000">);</font>
+  <font color="#FF0000">}</font>
+<font color="#FF0000">}</font>
+</tt></pre>
+</body>
+
+</html>
+

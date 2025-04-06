@@ -1,0 +1,291 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf8">
+  <title>
+2-ocaml/corrige/interp.ml</title>
+  <meta name="GENERATOR" content="caml2html 1.4.4">
+<style type="text/css">
+code,pre { color:black;background-color:white }a.Cannot { color:black;text-decoration:none }.Cstring { color: #aa4444; }
+.Craise { color: red; }
+.Cconstructor { color: #0033cc; }
+.Ccomment { color: #990000; }
+.Cassert,
+.Cinclude,
+.Copen { color: #cc9900; }
+.Cbar,
+.Cdo,
+.Cdone,
+.Cdownto,
+.Celse,
+.Cfor,
+.Cif,
+.Clazy,
+.Cmatch,
+.Cnew,
+.Cor,
+.Cthen,
+.Cto,
+.Ctry,
+.Cwhen,
+.Cwhile,
+.Cwith { color: #77aaaa; }
+.Cbegin,
+.Cend,
+.Cobject,
+.Csig,
+.Cstruct { color: #990099; }
+.Clinenum { color: black; background-color: silver; }
+.Cbackground { background-color: white; }
+.Cannot:hover { background-color: #b4eeb4; }
+.Calphakeyword,
+.Casr,
+.Cland,
+.Clor,
+.Clsl,
+.Clsr,
+.Clxor,
+.Cmod { color: #808080; }
+.Cfalse,
+.Cnonalphakeyword,
+.Cquotation,
+.Ctrue { }
+.Cand,
+.Cas,
+.Cclass,
+.Cconstraint,
+.Cexception,
+.Cexternal,
+.Cfun,
+.Cfunction,
+.Cfunctor,
+.Cin,
+.Cinherit,
+.Cinitializer,
+.Clet,
+.Cmethod,
+.Cmodule,
+.Cmutable,
+.Cof,
+.Cprivate,
+.Crec,
+.Ctype,
+.Cval,
+.Cvirtual { color: green; }
+</style>
+</head>
+<body>
+
+<pre>
+<span class="Copen">open</span> <span class="Cconstructor">Ast</span>
+<span class="Copen">open</span> <span class="Cconstructor">Format</span>
+
+<span class="Ccomment">(* Exception raised to signal a runtime error *)</span>
+<span class="Cexception">exception</span> <span class="Cconstructor">Error</span> <span class="Cof">of</span> string
+<span class="Clet">let</span> error s <span class="Cnonalphakeyword">=</span> raise <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Error</span> s<span class="Cnonalphakeyword">)</span>
+
+<span class="Ccomment">(* Values of Mini-Python.</span>
+<span class="Ccomment"></span>
+<span class="Ccomment">   Two main differences wrt Python:</span>
+<span class="Ccomment"></span>
+<span class="Ccomment">   - We use here machine integers (OCaml type `int`) while Python</span>
+<span class="Ccomment">     integers are arbitrary-precision integers (we could use an OCaml</span>
+<span class="Ccomment">     library for big integers, such as zarith, but we opt for simplicity</span>
+<span class="Ccomment">     here).</span>
+<span class="Ccomment"></span>
+<span class="Ccomment">   - What Python calls a ``list'' is a resizeable array. In Mini-Python,</span>
+<span class="Ccomment">     there is no way to modify the length, so a mere OCaml array can be used.</span>
+<span class="Ccomment">*)</span>
+<span class="Ctype">type</span> value <span class="Cnonalphakeyword">=</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vnone</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vbool</span> <span class="Cof">of</span> bool
+  <span class="Cbar">|</span> <span class="Cconstructor">Vint</span> <span class="Cof">of</span> int
+  <span class="Cbar">|</span> <span class="Cconstructor">Vstring</span> <span class="Cof">of</span> string
+  <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> <span class="Cof">of</span> value array
+
+<span class="Ccomment">(* Print a value on standard output *)</span>
+<span class="Clet">let</span> <span class="Crec">rec</span> print_value <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vnone</span> <span class="Cnonalphakeyword">-&gt;</span> printf <span class="Cstring">"None"</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vbool</span> <span class="Ctrue">true</span> <span class="Cnonalphakeyword">-&gt;</span> printf <span class="Cstring">"True"</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vbool</span> <span class="Cfalse">false</span> <span class="Cnonalphakeyword">-&gt;</span> printf <span class="Cstring">"False"</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vint</span> n <span class="Cnonalphakeyword">-&gt;</span> printf <span class="Cstring">"%d"</span> n
+  <span class="Cbar">|</span> <span class="Cconstructor">Vstring</span> s <span class="Cnonalphakeyword">-&gt;</span> printf <span class="Cstring">"%s"</span> s
+  <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> a <span class="Cnonalphakeyword">-&gt;</span>
+    <span class="Clet">let</span> n <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>length a <span class="Cin">in</span>
+    printf <span class="Cstring">"["</span><span class="Cnonalphakeyword">;</span>
+    <span class="Cfor">for</span> i <span class="Cnonalphakeyword">=</span> 0 <span class="Cto">to</span> n-1 <span class="Cdo">do</span> print_value a<span class="Cnonalphakeyword">.</span><span class="Cnonalphakeyword">(</span>i<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span> <span class="Cif">if</span> i <span class="Cnonalphakeyword">&lt;</span> n-1 <span class="Cthen">then</span> printf <span class="Cstring">", "</span> <span class="Cdone">done</span><span class="Cnonalphakeyword">;</span>
+    printf <span class="Cstring">"]"</span>
+
+<span class="Ccomment">(* Boolean interpretation of a value</span>
+<span class="Ccomment"></span>
+<span class="Ccomment">   In Python, any value can be used as a Boolean: None, the integer 0,</span>
+<span class="Ccomment">   the empty string, and the empty list are all considered to be</span>
+<span class="Ccomment">   False, and any other value to be True.</span>
+<span class="Ccomment">*)</span>
+<span class="Clet">let</span> is_false <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vnone</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vbool</span> <span class="Cfalse">false</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vstring</span> <span class="Cstring">""</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> <span class="Cnonalphakeyword">[|</span><span class="Cnonalphakeyword">|]</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Ctrue">true</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vint</span> n <span class="Cnonalphakeyword">-&gt;</span> n <span class="Cnonalphakeyword">=</span> 0
+  <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cfalse">false</span>
+
+<span class="Clet">let</span> is_true v <span class="Cnonalphakeyword">=</span> not <span class="Cnonalphakeyword">(</span>is_false v<span class="Cnonalphakeyword">)</span>
+
+<span class="Ccomment">(* Binary operators</span>
+<span class="Ccomment">   - Operator + is overloaded: arithmetic addition, string concatenation,</span>
+<span class="Ccomment">     and list concatenation.</span>
+<span class="Ccomment">   - Operators // and % must fail if we attempt a division by zero.</span>
+<span class="Ccomment">*)</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> compare_list a1 n1 a2 n2 i <span class="Cnonalphakeyword">=</span>
+  <span class="Cif">if</span> i <span class="Cnonalphakeyword">=</span> n1 <span class="Cnonalphakeyword">&amp;&amp;</span> i <span class="Cnonalphakeyword">=</span> n2 <span class="Cthen">then</span> 0
+  <span class="Celse">else</span> <span class="Cif">if</span> i <span class="Cnonalphakeyword">=</span> n1 <span class="Cthen">then</span> -1
+  <span class="Celse">else</span> <span class="Cif">if</span> i <span class="Cnonalphakeyword">=</span> n2 <span class="Cthen">then</span> 1
+  <span class="Celse">else</span> <span class="Clet">let</span> c <span class="Cnonalphakeyword">=</span> compare a1<span class="Cnonalphakeyword">.</span><span class="Cnonalphakeyword">(</span>i<span class="Cnonalphakeyword">)</span> a2<span class="Cnonalphakeyword">.</span><span class="Cnonalphakeyword">(</span>i<span class="Cnonalphakeyword">)</span> <span class="Cin">in</span>
+       <span class="Cif">if</span> c &lt;&gt; 0 <span class="Cthen">then</span> c <span class="Celse">else</span> compare_list a1 n1 a2 n2 <span class="Cnonalphakeyword">(</span>i <span class="Cnonalphakeyword">+</span> 1<span class="Cnonalphakeyword">)</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> compare_value v1 v2 <span class="Cnonalphakeyword">=</span> <span class="Cmatch">match</span> v1<span class="Cnonalphakeyword">,</span> v2 <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> a1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vlist</span> a2 <span class="Cnonalphakeyword">-&gt;</span>
+    compare_list a1 <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>length a1<span class="Cnonalphakeyword">)</span> a2 <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>length a2<span class="Cnonalphakeyword">)</span> 0
+  <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> compare v1 v2
+
+<span class="Clet">let</span> binop op v1 v2 <span class="Cnonalphakeyword">=</span> <span class="Cmatch">match</span> op<span class="Cnonalphakeyword">,</span> v1<span class="Cnonalphakeyword">,</span> v2 <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Badd</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span>n1<span class="Cnonalphakeyword">+</span>n2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Badd</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vstring</span> s1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vstring</span> s2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vstring</span> <span class="Cnonalphakeyword">(</span>s1 ^ s2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Badd</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vlist</span> l1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vlist</span> l2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vlist</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>append l1 l2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bsub</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span>n1<span class="Cnonalphakeyword">-</span>n2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bmul</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span>n1<span class="Cnonalphakeyword">*</span>n2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Bdiv</span> <span class="Cbar">|</span> <span class="Cconstructor">Bmod</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> 0 <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"division by zero"</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bdiv</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span>n1/n2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bmod</span><span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n1<span class="Cnonalphakeyword">,</span> <span class="Cconstructor">Vint</span> n2 <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span>n1 <span class="Cmod">mod</span> n2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Beq</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>compare_value v1 v2 <span class="Cnonalphakeyword">=</span> 0<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bneq</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>compare_value v1 v2 &lt;&gt; 0<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Blt</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>compare_value v1 v2 <span class="Cnonalphakeyword">&lt;</span> 0<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Ble</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>compare_value v1 v2 &lt;= 0<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bgt</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>compare_value v1 v2 <span class="Cnonalphakeyword">&gt;</span> 0<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Bge</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>compare_value v1 v2 &gt;= 0<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"unsupported operand types"</span>
+
+<span class="Ccomment">(* We only have global functions in Mini-Python *)</span>
+
+<span class="Clet">let</span> functions <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>create 16 : <span class="Cnonalphakeyword">(</span>string<span class="Cnonalphakeyword">,</span> ident list <span class="Cnonalphakeyword">*</span> stmt<span class="Cnonalphakeyword">)</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>t<span class="Cnonalphakeyword">)</span>
+
+<span class="Ccomment">(* The following exception is used to interpret Python's `return` *)</span>
+
+<span class="Cexception">exception</span> <span class="Cconstructor">Return</span> <span class="Cof">of</span> value
+
+<span class="Ccomment">(* Local variables (function parameters and local variables introduced</span>
+<span class="Ccomment">   by assignments) are stored in a hash table that is passed to the</span>
+<span class="Ccomment">   following OCaml functions as parameter `ctx`. *)</span>
+
+<span class="Ctype">type</span> ctx <span class="Cnonalphakeyword">=</span> <span class="Cnonalphakeyword">(</span>string<span class="Cnonalphakeyword">,</span> value<span class="Cnonalphakeyword">)</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>t
+
+<span class="Ccomment">(* Interpreting an expression (returns a value) *)</span>
+
+<span class="Clet">let</span> <span class="Crec">rec</span> expr ctx <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecst</span> <span class="Cconstructor">Cnone</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Vnone</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecst</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Cbool</span> b<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Vbool</span> b
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecst</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Cint</span> n<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Vint</span> n
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecst</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Cstring</span> s<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Vstring</span> s
+  <span class="Cbar">|</span> <span class="Cconstructor">Ebinop</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Band</span><span class="Cnonalphakeyword">,</span> e1<span class="Cnonalphakeyword">,</span> e2<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Clet">let</span> v1 <span class="Cnonalphakeyword">=</span> expr ctx e1 <span class="Cin">in</span>
+      <span class="Cif">if</span> is_true v1 <span class="Cthen">then</span> expr ctx e2 <span class="Celse">else</span> v1
+  <span class="Cbar">|</span> <span class="Cconstructor">Ebinop</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Bor</span><span class="Cnonalphakeyword">,</span> e1<span class="Cnonalphakeyword">,</span> e2<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Clet">let</span> v1 <span class="Cnonalphakeyword">=</span> expr ctx e1 <span class="Cin">in</span>
+      <span class="Cif">if</span> is_false v1 <span class="Cthen">then</span> expr ctx e2 <span class="Celse">else</span> v1
+  <span class="Cbar">|</span> <span class="Cconstructor">Ebinop</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Badd</span> <span class="Cbar">|</span> <span class="Cconstructor">Bsub</span> <span class="Cbar">|</span> <span class="Cconstructor">Bmul</span> <span class="Cbar">|</span> <span class="Cconstructor">Bdiv</span> <span class="Cbar">|</span> <span class="Cconstructor">Bmod</span> <span class="Cbar">|</span>
+            <span class="Cconstructor">Beq</span> <span class="Cbar">|</span> <span class="Cconstructor">Bneq</span> <span class="Cbar">|</span> <span class="Cconstructor">Blt</span> <span class="Cbar">|</span> <span class="Cconstructor">Ble</span> <span class="Cbar">|</span> <span class="Cconstructor">Bgt</span> <span class="Cbar">|</span> <span class="Cconstructor">Bge</span> <span class="Cas">as</span> op<span class="Cnonalphakeyword">,</span> e1<span class="Cnonalphakeyword">,</span> e2<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      binop op <span class="Cnonalphakeyword">(</span>expr ctx e1<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">(</span>expr ctx e2<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Eunop</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Uneg</span><span class="Cnonalphakeyword">,</span> e1<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cbegin">begin</span> <span class="Cmatch">match</span> expr ctx e1 <span class="Cwith">with</span>
+        <span class="Cbar">|</span> <span class="Cconstructor">Vint</span> n <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">-</span>n<span class="Cnonalphakeyword">)</span>
+        <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"unsupported operand types"</span> <span class="Cend">end</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Eunop</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Unot</span><span class="Cnonalphakeyword">,</span> e1<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Vbool</span> <span class="Cnonalphakeyword">(</span>is_false <span class="Cnonalphakeyword">(</span>expr ctx e1<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecall</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">=</span><span class="Cstring">"len"</span><span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">[</span>e1<span class="Cnonalphakeyword">]</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cbegin">begin</span> <span class="Cmatch">match</span> expr ctx e1 <span class="Cwith">with</span>
+        <span class="Cbar">|</span> <span class="Cconstructor">Vstring</span> s <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">String</span><span class="Cnonalphakeyword">.</span>length s<span class="Cnonalphakeyword">)</span>
+        <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> l <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>length l<span class="Cnonalphakeyword">)</span>
+        <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"this value has no 'len'"</span> <span class="Cend">end</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecall</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">=</span><span class="Cstring">"list"</span><span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">[</span><span class="Cconstructor">Ecall</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">=</span><span class="Cstring">"range"</span><span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">,</span> <span class="Cnonalphakeyword">[</span>e1<span class="Cnonalphakeyword">]</span><span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">]</span><span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Clet">let</span> n <span class="Cnonalphakeyword">=</span> expr_int ctx e1 <span class="Cin">in</span>
+      <span class="Cconstructor">Vlist</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>init <span class="Cnonalphakeyword">(</span>max 0 n<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> i <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Vint</span> i<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Ecall</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">=</span>f<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">,</span> el<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cif">if</span> not <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>mem functions f<span class="Cnonalphakeyword">)</span> <span class="Cthen">then</span> error <span class="Cnonalphakeyword">(</span><span class="Cstring">"unbound function "</span> ^ f<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span>
+      <span class="Clet">let</span> args<span class="Cnonalphakeyword">,</span> body <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>find functions f <span class="Cin">in</span>
+      <span class="Cif">if</span> <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>length args &lt;&gt; <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>length el <span class="Cthen">then</span> error <span class="Cstring">"bad arity"</span><span class="Cnonalphakeyword">;</span>
+      <span class="Clet">let</span> ctx' <span class="Cnonalphakeyword">=</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>create 16 <span class="Cin">in</span>
+      <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>iter2 <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> <span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">=</span>x<span class="Cnonalphakeyword">}</span> e <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>add ctx' x <span class="Cnonalphakeyword">(</span>expr ctx e<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span> args el<span class="Cnonalphakeyword">;</span>
+      <span class="Cbegin">begin</span> <span class="Ctry">try</span> stmt ctx' body<span class="Cnonalphakeyword">;</span> <span class="Cconstructor">Vnone</span> <span class="Cwith">with</span> <span class="Cconstructor">Return</span> v <span class="Cnonalphakeyword">-&gt;</span> v <span class="Cend">end</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Elist</span> el <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Vlist</span> <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>of_list <span class="Cnonalphakeyword">(</span><span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>map <span class="Cnonalphakeyword">(</span>expr ctx<span class="Cnonalphakeyword">)</span> el<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Eident</span> <span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">}</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cif">if</span> not <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>mem ctx id<span class="Cnonalphakeyword">)</span> <span class="Cthen">then</span> error <span class="Cstring">"unbound variable"</span><span class="Cnonalphakeyword">;</span>
+      <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>find ctx id
+  <span class="Cbar">|</span> <span class="Cconstructor">Eget</span> <span class="Cnonalphakeyword">(</span>e1<span class="Cnonalphakeyword">,</span> e2<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cbegin">begin</span> <span class="Cmatch">match</span> expr ctx e1 <span class="Cwith">with</span>
+      <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> l <span class="Cnonalphakeyword">-&gt;</span>
+          <span class="Clet">let</span> i <span class="Cnonalphakeyword">=</span> expr_int ctx e2 <span class="Cin">in</span>
+          <span class="Cnonalphakeyword">(</span><span class="Ctry">try</span> l<span class="Cnonalphakeyword">.</span><span class="Cnonalphakeyword">(</span>i<span class="Cnonalphakeyword">)</span> <span class="Cwith">with</span> <span class="Cconstructor">Invalid_argument</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"index out of bounds"</span><span class="Cnonalphakeyword">)</span>
+      <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"list expected"</span> <span class="Cend">end</span>
+
+<span class="Ccomment">(* Interpreting an expression, and checking that it is an integer *)</span>
+
+<span class="Cand">and</span> expr_int ctx e <span class="Cnonalphakeyword">=</span> <span class="Cmatch">match</span> expr ctx e <span class="Cwith">with</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Vbool</span> <span class="Cfalse">false</span> <span class="Cnonalphakeyword">-&gt;</span> 0
+  <span class="Cbar">|</span> <span class="Cconstructor">Vbool</span> <span class="Ctrue">true</span> <span class="Cnonalphakeyword">-&gt;</span> 1
+  <span class="Cbar">|</span> <span class="Cconstructor">Vint</span> n <span class="Cnonalphakeyword">-&gt;</span> n
+  <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"integer expected"</span>
+
+<span class="Ccomment">(* Interpreting a statement</span>
+<span class="Ccomment"></span>
+<span class="Ccomment">   returns nothing but may raise exception `Return` *)</span>
+
+<span class="Cand">and</span> stmt ctx <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Sif</span> <span class="Cnonalphakeyword">(</span>e<span class="Cnonalphakeyword">,</span> s1<span class="Cnonalphakeyword">,</span> s2<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cif">if</span> is_true <span class="Cnonalphakeyword">(</span>expr ctx e<span class="Cnonalphakeyword">)</span> <span class="Cthen">then</span> stmt ctx s1 <span class="Celse">else</span> stmt ctx s2
+  <span class="Cbar">|</span> <span class="Cconstructor">Sreturn</span> e <span class="Cnonalphakeyword">-&gt;</span>
+      raise <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Return</span> <span class="Cnonalphakeyword">(</span>expr ctx e<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Sassign</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">,</span> e1<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>replace ctx id <span class="Cnonalphakeyword">(</span>expr ctx e1<span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Sset</span> <span class="Cnonalphakeyword">(</span>e1<span class="Cnonalphakeyword">,</span> e2<span class="Cnonalphakeyword">,</span> e3<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cbegin">begin</span> <span class="Cmatch">match</span> expr ctx e1 <span class="Cwith">with</span>
+      <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> l <span class="Cnonalphakeyword">-&gt;</span> l<span class="Cnonalphakeyword">.</span><span class="Cnonalphakeyword">(</span>expr_int ctx e2<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">&lt;-</span> expr ctx e3
+      <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"list expected"</span> <span class="Cend">end</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Sprint</span> e <span class="Cnonalphakeyword">-&gt;</span>
+      print_value <span class="Cnonalphakeyword">(</span>expr ctx e<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">;</span> printf <span class="Cstring">"@."</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Sblock</span> bl <span class="Cnonalphakeyword">-&gt;</span>
+      block ctx bl
+  <span class="Cbar">|</span> <span class="Cconstructor">Sfor</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">{</span>id<span class="Cnonalphakeyword">=</span>x<span class="Cnonalphakeyword">}</span><span class="Cnonalphakeyword">,</span> e<span class="Cnonalphakeyword">,</span> s<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span>
+      <span class="Cbegin">begin</span> <span class="Cmatch">match</span> expr ctx e <span class="Cwith">with</span>
+      <span class="Cbar">|</span> <span class="Cconstructor">Vlist</span> l <span class="Cnonalphakeyword">-&gt;</span>
+        <span class="Cconstructor">Array</span><span class="Cnonalphakeyword">.</span>iter <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> v <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>replace ctx x v<span class="Cnonalphakeyword">;</span> stmt ctx s<span class="Cnonalphakeyword">)</span> l
+      <span class="Cbar">|</span> <span class="Cnonalphakeyword">_</span> <span class="Cnonalphakeyword">-&gt;</span> error <span class="Cstring">"list expected"</span> <span class="Cend">end</span>
+  <span class="Cbar">|</span> <span class="Cconstructor">Seval</span> e <span class="Cnonalphakeyword">-&gt;</span>
+      ignore <span class="Cnonalphakeyword">(</span>expr ctx e<span class="Cnonalphakeyword">)</span>
+
+<span class="Ccomment">(* Interpreting a block (a sequence of statements) *)</span>
+
+<span class="Cand">and</span> block ctx <span class="Cnonalphakeyword">=</span> <span class="Cfunction">function</span>
+  <span class="Cbar">|</span> <span class="Cnonalphakeyword">[</span><span class="Cnonalphakeyword">]</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cnonalphakeyword">(</span><span class="Cnonalphakeyword">)</span>
+  <span class="Cbar">|</span> s <span class="Cnonalphakeyword">::</span> sl <span class="Cnonalphakeyword">-&gt;</span> stmt ctx s<span class="Cnonalphakeyword">;</span> block ctx sl
+
+<span class="Ccomment">(* Interpreting a file *)</span>
+
+<span class="Clet">let</span> file <span class="Cnonalphakeyword">(</span>fl<span class="Cnonalphakeyword">,</span> s<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">=</span>
+  <span class="Cconstructor">List</span><span class="Cnonalphakeyword">.</span>iter
+    <span class="Cnonalphakeyword">(</span><span class="Cfun">fun</span> <span class="Cnonalphakeyword">(</span>f<span class="Cnonalphakeyword">,</span>args<span class="Cnonalphakeyword">,</span>body<span class="Cnonalphakeyword">)</span> <span class="Cnonalphakeyword">-&gt;</span> <span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>add functions f<span class="Cnonalphakeyword">.</span>id <span class="Cnonalphakeyword">(</span>args<span class="Cnonalphakeyword">,</span> body<span class="Cnonalphakeyword">)</span><span class="Cnonalphakeyword">)</span> fl<span class="Cnonalphakeyword">;</span>
+  stmt <span class="Cnonalphakeyword">(</span><span class="Cconstructor">Hashtbl</span><span class="Cnonalphakeyword">.</span>create 16<span class="Cnonalphakeyword">)</span> s
+</pre>
+
+<hr>
+<p>
+<em>This document was generated using
+<a href="http://martin.jambon.free.fr/caml2html.html">caml2html</a></em>
+</body>
+</html>
