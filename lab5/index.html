@@ -1,0 +1,244 @@
+<html>
+
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="../../style.css">
+<title>
+INF564 - Compilation - TD 3
+</title>
+<style>
+tt {
+        color:blue;
+}
+pre {
+        color:blue;
+}
+</style>
+</head>
+
+<body>
+
+<h1>INF564 - TD 3 - Mini-Turtle (in OCaml)</h1>
+
+The goal of this lab is to implement the syntax analysis of a small
+Logo language (graphical turtle) whose interpreter is provided.
+No prior knowledge of Logo is required.
+
+<p>
+
+The tool <tt>menhir</tt> and the <tt>graphics</tt> library are
+requirements for this lab. If you haven't already, install them with
+the command <tt>opam install menhir graphics</tt>.
+
+<p>
+
+The basic structure is provided (a tarball with OCaml files and a
+Makefile) :
+<a href="mini-turtle.tar.gz">mini-turtle.tar.gz</a>. Once
+uncompressed (for instance with <tt>tar zxvf mini-turtle.tar.gz</tt>,
+you get a directory <tt>mini-turtle/</tt> with the following files:
+<center>
+<table border="yes">
+<tr><td>turtle.ml(i) <td> the graphical turtle (complete)
+<tr><td>ast.ml <td> the abstract syntax <b>mini-Turtle</b> (complete)
+<tr><td>lexer.mll
+    <td> lexical analyzer (<font color="red">to be completed</font>)
+<tr><td>parser.mly
+    <td> syntax analyzer (<font color="red">to be completed</font>)
+<tr><td>interp.ml <td> the interpreter (complete)
+<tr><td>miniturtle.ml <td> main file (complete)
+<tr><td>Makefile/dune <td> to automate the build (complete)
+</table>
+</center>
+<p>
+The code compiles (run <tt>make</tt>, which runs <tt>dune build</tt>)
+but is incomplete. Places to be filled are marked <tt>* TODO */</tt>.
+The program takes a file to be interpreted on the command line, with
+suffix <tt>.logo</tt>.
+When running <tt>make</tt>, the program is run on file <tt>test.logo</tt>.
+
+<h3>Syntax of mini-Turtle</h3>
+
+<h4>Lexical Conventions</h4>
+
+Spaces, tabs, and newlines are blanks.
+There are two kinds of comments: from
+<tt>//</tt> to the end of the line, or enclosed
+by <tt>(*</tt> and <tt>*)</tt> (and not nested).
+The following identifiers are keywords:
+<pre>
+     if else def repeat penup pendown forward turnleft
+     turnright color black white red green blue
+</pre>
+An identifier <tt>ident</tt> contains letters, digits, and underscores
+and starts with a letter. An integer literal
+<tt>integer</tt> is a sequence of digits.
+
+<h4>Syntax</h4>
+
+Names in italics, such as <tt><i>expr</i></tt>, are nonterminals.
+Notation <tt><i>stmt<sup>*</sup></i></tt> means a repetition zero,
+one, or several times of nonterminal <tt><i>stmt</i></tt>.
+Notation <tt><i>expr<sup>*</sup><inf>,</inf></i></tt> means a repetition
+of nonterminal <tt><i>expr</i></tt> where occurrences are
+separated with the terminal <tt>,</tt> (a comma).
+
+<pre>
+  <i>file</i> ::= <i>def<sup>*</sup></i> <i>stmt<sup>*</sup></i>
+  <i>def</i>  ::= def ident ( <i>ident<sup>*</sup><inf>,</inf></i> ) <i>stmt</i>
+  <i>stmt</i> ::= penup
+         | pendown
+         | forward <i>expr</i>
+         | turnleft <i>expr</i>
+         | turnright <i>expr</i>
+         | color <i>color</i>
+         | ident ( <i>expr<sup>*</sup><inf>,</inf></i> )
+         | if <i>expr</i> <i>stmt</i>
+         | if <i>expr</i> <i>stmt</i> else <i>stmt</i>
+         | repeat <i>expr</i> <i>stmt</i>
+         | { <i>stmt<sup>*</sup></i> }
+  <i>expr</i> ::= integer
+         | ident
+         | <i>expr</i> + <i>expr</i>
+         | <i>expr</i> - <i>expr</i>
+         | <i>expr</i> * <i>expr</i>
+         | <i>expr</i> / <i>expr</i>
+         | - <i>expr</i>
+         | ( <i>expr</i> )
+ <i>color</i> ::= black | white | red | green | blue
+</pre>
+
+Priorities of arithmetic operations are usual, and unary negation has the
+strongest priority.
+
+<h3>Lab Assignment</h3>
+
+You have to fill files <tt>lexer.mll</tt>
+(<a target="_blank"
+  href="https://caml.inria.fr/pub/docs/manual-ocaml/lexyacc.html">ocamllex</a>)
+and <tt>parser.mly</tt>
+(<a target="_blank"
+href="http://gallium.inria.fr/~fpottier/menhir/manual.pdf">Menhir</a>).
+The following questions suggest an incremental way of doing this.
+At each step, you can test by modifying file <tt>test.logo</tt>.  The
+command <tt>make</tt> (at the root of the directory) runs
+tools <tt>ocamllex</tt> and <tt>menhir</tt> (to build/update the OCaml
+files <tt>lexer.ml</tt>, <tt>parser.mli</tt> and <tt>parser.ml</tt>),
+then compile the OCaml code, and finally run the program on
+file <tt>test.logo</tt>. If the parsing is successful,
+a graphical windows opens and displays the interpretation of the
+program. Pressing any key closes the window.
+
+<p>
+
+If needed, do <tt>make explain</tt> to display the conflicts
+detected by <tt>menhir</tt>.
+
+<h4>Question 1. Comments</h4>
+
+Complete the file <tt>lexer.mll</tt> to ignore blanks and comments
+and to return the token <tt>EOF</tt> when the end of input is reached.
+The command <tt>make</tt> should be opening an empty window, since
+file <tt>test.logo</tt> only contains comments at this point.
+
+<h4>Question 2. Arithmetic Expressions</h4>
+
+Update the parser the accept arithmetic expressions
+and the <tt>forward</tt> statement.
+The file <tt>test.logo</tt> containing
+<pre>
+  forward 100
+</pre>
+should be accepted and a window should open with an horizontal line
+(100 pixels long). Check the priorities of arithmetic operations, for
+instance with
+<pre>
+  forward 100 + 1 * 0
+</pre>
+If the priorities are wrong, you will get a point instead of a line.
+
+<h4>Question 3. Other Atomic Statements</h4>
+
+Add syntax for the other atomic statements, namely
+<tt>penup</tt>, <tt>pendown</tt>, <tt>turnleft</tt>, <tt>turnright</tt>, and
+<tt>color</tt>.
+
+<p>
+
+Test with programs such as
+<pre>
+forward 100
+turnleft 90
+color red
+forward 100
+</pre>
+
+<h4>Question 4. Blocks and Control Structures</h4>
+
+Add syntax for blocks and control structures
+<tt>if</tt> and <tt>repeat</tt>.
+The two grammar rules for <tt>if</tt> should
+trigger a shift/reduce conflict. Identify it, understand it, and solve
+it in the way that is most appropriate.
+
+<p>
+
+Test with programs such as
+<pre>
+repeat 4 {
+  forward 100
+  turnleft 90
+}
+</pre>
+
+<h4>Question 5. Functions</h4>
+
+Finally, add syntax for function declarations and function calls.
+
+<p>
+
+You can test using the files provided in subdirectory
+<tt>tests</tt>, namely :
+<ul>
+<li> <a href="mini-turtle/tests/hilbert.logo">hilbert.logo</a>
+<li> <a href="mini-turtle/tests/poly.logo">poly.logo</a>
+<li> <a href="mini-turtle/tests/sierpinski1.logo">sierpinski1.logo</a>
+<li> <a href="mini-turtle/tests/sierpinski2.logo">sierpinski2.logo</a>
+<li> <a href="mini-turtle/tests/von_koch.logo">von_koch.logo</a>
+<li> <a href="mini-turtle/tests/zigzag.logo">zigzag.logo</a>
+</ul>
+The command <tt>make tests</tt> runs the program on each of these files.
+You should get the following images (pressing a key in between):
+
+<table>
+<tr>
+<td> <img width="200" src="hilbert.png">
+<td> <img width="200" src="poly.png">
+<td> <img width="200" src="sierpinski1.png">
+<td> <img width="200" src="sierpinski2.png">
+<td> <img width="200" src="von_koch.png">
+<td> <img width="200" src="zigzag.png">
+</table>
+
+
+<div style="text-align:right">
+solution:
+<a href="">lexer.mll</a> /
+<a href="">parser.mly</a>
+</div>
+
+<hr>
+
+<font size="-1"><a href="../../index.html">back to the main page</a></font>
+
+</body>
+</html>
+
+<!-- Local Variables: -->
+<!-- ispell-local-dictionary: "american" -->
+<!-- End: -->
+
+<!--  LocalWords:  lexer.mll parser.mly make mini-turtle test.logo
+ -->
+<!--  LocalWords:  ocamllex mini-Turtle
+ -->
