@@ -1,5 +1,5 @@
 
-(* Le flocon de Von Koch *)
+(* Von Koch flake *)
 
 def von_koch(n, d) {
   if n {

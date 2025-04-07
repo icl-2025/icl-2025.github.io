@@ -1,4 +1,4 @@
-(* Triangle de Sierpinski (Gabriel DORIATH DÖHLER) *)
+(* Sierpinski triangle (Gabriel DORIATH DÖHLER) *)
 
 def sierpinski(n, d) {
   if n {
@@ -35,4 +35,3 @@ forward 200
 turnleft 90
 pendown
 sierpinski(6, 512)
-

@@ -1,5 +1,5 @@
 
-(* dessine un polygone et replace la tortue *)
+(* draws a polygon and resets the turtle *)
 
 def polygone_aux(n, d, a) {
   turnleft 90 + a/2

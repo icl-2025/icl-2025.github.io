@@ -1,4 +1,4 @@
-(* Triangle de Sierpinski (Gabriel DORIATH DÖHLER) *)
+(* Sierpinski triangle (Gabriel DORIATH DÖHLER) *)
 
 def main(n, d, a) {
   turnleft_if_n_odd(n + 1, a)
@@ -32,4 +32,3 @@ turnleft 90
 pendown
 
 main(8, 780,  60)
-

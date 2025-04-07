@@ -1,6 +1,6 @@
 
-(* La courbe de Hilbert
-     cf http://fr.wikipedia.org/wiki/Courbe_de_Hilbert
+(* Hilbert curve
+     cf https://en.wikipedia.org/wiki/Hilbert_curve
 *)
 
 def l(n) {
