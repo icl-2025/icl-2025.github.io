@@ -1,0 +1,134 @@
+
+<!-- saved from url=(0086)https://www.enseignement.polytechnique.fr/informatique/INF564/td/4-ocaml/index-en.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="stylesheet" type="text/css" href="./index_files/style.css">
+<title>
+ICL 2025 - LAB 6 - Mini-C (in OCaml)
+</title>
+<style>
+tt {
+        color:blue;
+}
+pre {
+        color:blue;
+}
+</style>
+</head>
+
+<body>
+
+<h1>ICL 2025 - LAB 5 - Static Typing of mini-C (in OCaml)</h1>
+
+The goal of this lab is to implement the static typing of mini-C.
+
+<p>
+
+Typing rules are given in the
+<a href="miniC.pdf">
+ accompanying PDF description</a>.
+
+</p><h3>Provided Code</h3>
+
+The parser is already implemented:
+<a href="mini-c.tar.gz"><tt>mini-c.tar.gz</tt></a>
+
+<p>
+
+It is important to read and understand the abstract syntax of mini-C,
+that is files
+<tt>Ptree.mli</tt> (parsed trees)
+and
+<tt>Ttree.mli</tt> (typed trees).
+
+</p><p>
+
+A <tt>Makefile</tt> is provided, which calls <tt>dune</tt>.
+The executable is <tt>minic.exe</tt>.
+It expects a file with extension <tt>.c</tt> on the command line,
+possibly with options <tt>--debug</tt>, <tt>--parse-only</tt>, and
+<tt>--type-only</tt>.
+
+</p><p>
+
+If a lexical or syntax error is detected, it is reported and the
+program exits with code 1.
+
+</p><p>
+
+If the parsing is successful and option <tt>--parse-only</tt> is on
+the command line, then the program exits with code 0.
+
+</p><h3>Lab Assignment</h3>
+
+Implement the type checking in file <tt>typing.ml</tt>,
+as a function <tt>program</tt> that takes
+a <tt>Ptree.file</tt>
+as input and returns
+a <tt>Ttree.file</tt>.
+
+<p>
+
+If a type error is detected, it is signaled using
+exception <tt>Error</tt> defined
+in <tt>typing.ml</tt>, with a suitable message string.
+This exception is caught in <tt>main.ml</tt>
+and displayed as
+</p><pre>     error: ... your message here ...
+</pre>
+and the program exits with code 1.
+
+<h3>Indications</h3>
+
+It is strongly advised to proceed step by step, with systematic testing.
+As a first goal, consider a C program as simple as
+<pre>int main() { return 0; }
+</pre>
+This means you only have to consider integer literals in expressions
+and <tt>return</tt> statements.
+
+<p>
+
+In the provided tarball, the command <tt>make</tt> compiles <tt>minic.exe</tt>
+and then runs it on file <tt>test.c</tt> (also provided). So you
+simply have to modify <tt>test.c</tt> as you make progress.
+
+</p><h3>Tests</h3>
+
+Some tests are provided in the <tt>/tests</tt> folder in the tar.gz file and where
+<ul>
+<li> C files organized in various categories:
+<pre>
+  syntax/bad/    rejected at parsing
+  syntax/good/   accepted at parsing
+  typing/bad/    rejected at type checking
+  typing/good/   accepted at type checking
+</pre>
+<li> run <tt>make typing-tests</tt> to run your compiler on these files.
+  You should get the following:
+<pre>
+> make typing-tests
+dune build minic.exe
+cd  ./tests ; \
+	./test -2 ../minic.exe
+Test de ../minic.exe
+
+11 states, 374 transitions, table size 1562 bytes
+1401 additional bytes used for bindings
+
+Part 2: Type-checking
+bad .................................
+good ......
+Typing  : 39/39 : 100%
+</pre>
+</ul>
+
+<hr>
+
+<font size="-1"><a href="../../index.html">back to the main page</a></font>
+
+
+
+
+
+</body></html>
