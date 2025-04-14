@@ -45,5 +45,5 @@ to do so.
 | 5    | 8 Apr  | Parsing, part 2: bottom-up analyzers  | [Lecture 5](lecture5.pdf)         |      |
 | 5    | 8 Apr  | Syntactic Analysis of Mini-turtle |        |  [Lab 5, in OCaml](lab5/index) <br> [Lab 5, in Java](lab5/index-java) |
 | 5    | 15 Apr | Static Typing  | [Lecture 6](lecture6.pdf)         |      |
-| 5    | 15 Apr | Mini-C Type Checker |        |  [Lab 6, in OCaml](lab6/index) <br> [Lab 6, in Java](lab6/index-java) |
+| 5    | 15 Apr | Mini-C Type Checker |        |  [Lab 6, exercises](lab6/lab6.pdf) <br> [Lab 6, in OCaml](lab6/index) <br> [Lab 6, in Java](lab6/index-java) |
 | ---- | ------ | ------ | ------ | ---- |
