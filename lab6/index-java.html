@@ -1,10 +1,10 @@
 
-<!-- saved from url=(0086)https://www.enseignement.polytechnique.fr/informatique/INF564/td/4-ocaml/index-en.html -->
+<!-- saved from url=(0085)https://www.enseignement.polytechnique.fr/informatique/INF564/td/4-java/index-en.html -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<link rel="stylesheet" type="text/css" href="./index_files/style.css">
+<link rel="stylesheet" type="text/css" href="./index-java_files/style.css">
 <title>
-ICL 2025 - LAB 6 - Mini-C (in OCaml)
+ICL 2025 - LAB 6 - Mini-C (in Java)
 </title>
 <style>
 tt {
@@ -18,7 +18,7 @@ pre {
 
 <body>
 
-<h1>ICL 2025 - LAB 5 - Static Typing of mini-C (in OCaml)</h1>
+<h1>ICL 2025 - LAB 5 - Static Typing of mini-C (in Java)</h1>
 
 The goal of this lab is to implement the static typing of mini-C.
 
@@ -31,23 +31,33 @@ Typing rules are given in the
 </p><h3>Provided Code</h3>
 
 The parser is already implemented:
-<a href="mini-c.tar.gz"><tt>mini-c.tar.gz</tt></a>
+<a href="mini-c-java.tar.gz"><tt>mini-c-java.tar.gz</tt></a>
 
 <p>
 
 It is important to read and understand the abstract syntax of mini-C,
-that is files
-<tt>Ptree.mli</tt> (parsed trees)
+that is <tt>Pfile</tt></a> (parsed trees)
 and
-<tt>Ttree.mli</tt> (typed trees).
+<tt>File</tt></a> (typed trees).
 
 </p><p>
 
-A <tt>Makefile</tt> is provided, which calls <tt>dune</tt>.
-The executable is <tt>minic.exe</tt>.
+Once uncompressed (for instance with <tt>tar zxvf
+mini-c-java.tar.gz</tt>), you get a directory <tt>mini-c/</tt>.
+The library <tt>java-cup-11a-runtime.jar</tt>, provided in
+sub-directory <tt>lib/</tt>, must be added to the project
+(but recent versions of Eclipse and VSCode will do that automatically).
+
+</p><p>
+
+The provided code should compile out of the box.
+The <tt>main</tt> method is in file <tt>Main.java</tt>.
 It expects a file with extension <tt>.c</tt> on the command line,
 possibly with options <tt>--debug</tt>, <tt>--parse-only</tt>, and
 <tt>--type-only</tt>.
+If no file is given on the command line,
+the file <tt>test.c</tt> (included in the tarball)
+is used, to ease the tests.
 
 </p><p>
 
@@ -61,18 +71,19 @@ the command line, then the program exits with code 0.
 
 </p><h3>Lab Assignment</h3>
 
-Implement the type checking in file <tt>typing.ml</tt>,
-as a function <tt>program</tt> that takes
-a <tt>Ptree.file</tt>
-as input and returns
-a <tt>Ttree.file</tt>.
+Implement the type checking in file <tt>Typing.java</tt>.
+This is a visitor that takes a value of type
+<tt>Pfile</tt></a>
+as input (a tree built by the parser, defined in <tt>Ptree.java</tt>)
+and builds a value of
+type <tt>File</tt></a>
+(the tree built by the type checker, defined in <tt>Ttree.java</tt>).
 
 <p>
 
 If a type error is detected, it is signaled using
-exception <tt>Error</tt> defined
-in <tt>typing.ml</tt>, with a suitable message string.
-This exception is caught in <tt>main.ml</tt>
+exception <tt>Error</tt> , with a suitable message string.
+This exception is caught in <tt>Main.java</tt>
 and displayed as
 </p><pre>     error: ... your message here ...
 </pre>
@@ -87,15 +98,10 @@ As a first goal, consider a C program as simple as
 This means you only have to consider integer literals in expressions
 and <tt>return</tt> statements.
 
-<p>
+<h3>Tests</h3>
 
-In the provided tarball, the command <tt>make</tt> compiles <tt>minic.exe</tt>
-and then runs it on file <tt>test.c</tt> (also provided). So you
-simply have to modify <tt>test.c</tt> as you make progress.
-
-</p><h3>Tests</h3>
-
-Some tests are provided in the <tt>/tests</tt> folder in the tar.gz file and where
+Some tests are provided in the <tt>/tests</tt> folder in the tar.gz
+file and where
 <ul>
 <li> C files organized in various categories:
 <pre>
@@ -108,10 +114,10 @@ Some tests are provided in the <tt>/tests</tt> folder in the tar.gz file and whe
   You should get the following:
 <pre>
 > make typing-tests
-dune build minic.exe
-cd  ./tests ; \
-	./test -2 ../minic.exe
-Testing ../minic.exe
+javac -cp lib/java-cup-11a-runtime.jar -d bin src/mini_c/*.java
+cd ./tests ; \
+./test -2 ../mini-c
+Testing of ../mini-c
 
 11 states, 374 transitions, table size 1562 bytes
 1401 additional bytes used for bindings
@@ -119,7 +125,7 @@ Testing ../minic.exe
 Part 2: Type-checking
 bad .................................
 good ......
-Typing  : 39/39 : 100%
+Typing  : 39/39 : 84%
 </pre>
 </ul>
 
