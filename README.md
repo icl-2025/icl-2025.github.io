@@ -1,5 +1,9 @@
 # Interpretation and Compilation of Languages (2025)
 
+## Project: Mini Python
+
+The project assignment can be found [here](project/index).
+
 ## Office hours
 
 Please inform before (by email) that you plan to attend office hours.
