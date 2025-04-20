@@ -1,0 +1,90 @@
+
+<!-- saved from url=(0077)https://www.enseignement.polytechnique.fr/informatique/INF564/td/mini-python/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<link rel="stylesheet" type="text/css" href="./index_files/style.css">
+<title>
+INF564 - Compilation - Project - Mini Python
+</title>
+<style>
+tt {
+        color:blue;
+}
+pre {
+        color:blue;
+}
+</style>
+</head>
+
+<body>
+
+<h1>ICL 2025 - Project - Mini Python</h1>
+
+The goal is to build a compiler for a tiny fragment of the Python
+language, called Mini Python, to x86-64 assembly.
+
+<p>
+
+All the details are given in the
+<a href="mini-python.pdf">project statement</a>.
+
+</p><p>
+
+The project is due <b>Saturday, June 7, 23:59</b>, via email</a>.
+You must submit an tarball containing
+</p><ul>
+<li>the sources of your compiler;
+</li><li>a short report;
+</li><li>possibly other files, e.g. test files of your own.
+</li></ul>
+
+<b>Important:</b> to gain extra points, the project must include an
+extension of your choice (see the last section of the project
+statement).
+
+<h3>Code supplied</h3>
+
+The parser and the abstract syntax are provided.
+<ul>
+  <li>in Java: <a href="mini-python-java.tar.gz">mini-python-java.tar.gz</a>
+  </li><li>in OCaml: <a href="mini-python-ocaml.tar.gz">mini-python-ocaml.tar.gz</a>
+</li></ul>
+
+You don't have to read and understand the parser, but <b>you have to
+read and understand</b> the abstract syntax trees
+(respectively in <tt>Syntax.java</tt>
+and <tt>ast.ml</tt></a>).
+They are two kinds of syntax trees:
+<ul>
+<li>parsed trees = output of the parser = input of the type checker
+</li><li>typed trees = output of the type checker = input of the compiler
+</li></ul>
+
+<p>
+Note for Java: a shell script <tt>minipython</tt> is provided to run
+your compiler from the command line (useful when testing your
+compiler; see below).
+
+<h3>Test Files</h3>
+
+Test files are provided, together with a bash script to test your compiler:
+<ul>
+<li><a href="README.md">README</a>
+</li><li><a href="tests.tar.gz">tests.tar.gz</a>
+</li><li><a href="test">test</a> (bash script)
+</li></ul>
+Feel free to add more test files of your own (and if so, do include
+them in the tarball when you submit your project). This is also a
+possible source of extra points.
+
+<hr>
+
+<font size="-1"><a href="../index.html">back to the main page</a></font>
+
+
+
+
+
+
+
+</body></html>
