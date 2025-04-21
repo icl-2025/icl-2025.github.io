@@ -37,11 +37,9 @@ main:
       ...
 </pre>
 You can compile and run such a program as follows:
-<pre>  gcc -g file.s -o file
+<pre>  gcc -g -no-pie file.s -o file
   ./file
 </pre>
-(Add the option <tt>-no-pie</tt> if you use
-<tt>gcc</tt> version 5 or later.)
 
 <p>
 
