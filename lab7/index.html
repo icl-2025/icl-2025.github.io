@@ -68,36 +68,6 @@ Another very useful tool is the web framework
 <a href="https://godbolt.org">Compiler Explorer</a>. Use it as much as you like, even for
 your project.
 
-<h2>a. Arithmetic Expressions</h2>
-
-Write assembly programs to evaluate and display results of the following arithmetic expressions:
-<ul>
-<li><tt>4 + 6</tt>
-<li><tt>21 * 2</tt>
-<li><tt>4 + 7 / 2</tt>
-<li><tt>3 - 6 * (10 / 5)</tt>
-</ul>
-
-<div style="text-align:right">
-<a href="">solution</a>
-</div>
-
-<h2>b. Boolean Expressions</h2>
-
-Taking the convention that the integer <tt>0</tt> represents the value Boolean <i>false</i> and any other integer represents the value <i>true</i> ,
-write assembly programs that evaluate and displays the results of the following expressions (you must display <tt>true</tt> or <tt>false</tt>
-in the case of a Boolean result):
-
-<ul>
-<li><tt>true && false</tt>
-<li><tt>if 3 <> 4 then 10 * 2 else 14</tt>
-<li><tt>2 = 3 || 4 <= 2*3</tt>
-</ul>
-
-<div style="text-align:right">
-<a href="">solution TBD</a>
-</div>
-
 </p><h2>Printing using printf</h2>
 
 Compile the following C program:
@@ -128,12 +98,42 @@ trailing 0-character.
 <a href="">solution</a>
 </div>
 
+<h2>a. Arithmetic Expressions</h2>
+
+Write assembly programs to evaluate and display results of the following arithmetic expressions:
+<ul>
+<li><tt>4 + 6</tt>
+<li><tt>21 * 2</tt>
+<li><tt>4 + 7 / 2</tt>
+<li><tt>3 - 6 * (10 / 5)</tt>
+</ul>
+
+<div style="text-align:right">
+<a href="">solution</a>
+</div>
+
+<h2>b. Boolean Expressions</h2>
+
+Taking the convention that the integer <tt>0</tt> represents the value Boolean <i>false</i> and any other integer represents the value <i>true</i> ,
+write assembly programs that evaluate and displays the results of the following expressions (you must display <tt>true</tt> or <tt>false</tt>
+in the case of a Boolean result):
+
+<ul>
+<li><tt>true && false</tt>
+<li><tt>if 3 <> 4 then 10 * 2 else 14</tt>
+<li><tt>2 = 3 || 4 <= 2*3</tt>
+</ul>
+
+<div style="text-align:right">
+<a href="">solution TBD</a>
+</div>
+
 <h2>c. Global Variables</h2>
 
 Compile the following C program:
 
 <pre>
-#include <stdio.h>
+#include &lt;stdio.h&gt;
 
 int x = 2;
 int y = 4;
@@ -198,6 +198,29 @@ Try to do the following:
 <a href="">solution</a>
 </div>
 
+<h2>Fibonnaci</h2>
+
+Compile the following C program:
+
+<pre>#include &lt;stdio.h&gt;
+
+int fib(int n) {
+  if (n == 0)
+    return 1;
+  if (n == 1)
+    return 1;
+  return fib(n-1) + fib(n-2);
+}
+
+int main() {
+  int n = 5;
+  int r = fib(n);
+  printf("fib(5)=%d\n", r);
+  return 0;
+}
+</pre>
+
+Do not forget to "protect" intermediate values from recursive function calls.
 
 <h2>A Slightly More Complex (and More Interesting) Program</h2>
 
