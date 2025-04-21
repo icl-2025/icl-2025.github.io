@@ -50,4 +50,6 @@ to do so.
 | 5    | 8 Apr  | Syntactic Analysis of Mini-turtle |        |  [Lab 5, in OCaml](lab5/index) <br> [Lab 5, in Java](lab5/index-java) |
 | 6    | 15 Apr | Static Typing  | [Lecture 6](lecture6.pdf)         |      |
 | 6    | 15 Apr | Mini-C Type Checker & Exercises |        |  [Lab 6, exercises](lab6/lab6.pdf) <br> [Lab 6, in OCaml](lab6/index) <br> [Lab 6, in Java](lab6/index-java) |
+| 7    | 22 Apr | X86-64 Assembly  | [Lecture 7](lecture7.pdf)         |      |
+| 7    | 22 Apr | Exercises on X86-64 Assembly |        |  [Lab 7](lab7/index) |
 | ---- | ------ | ------ | ------ | ---- |
