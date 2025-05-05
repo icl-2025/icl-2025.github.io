@@ -103,7 +103,7 @@ for f in typing/bad/*.py; do
 	"1") score=`expr $score + 1`;;
 	*)
 	echo
-	echo "FAIL on "$f" (pour une mauvaise raison)";;
+	echo "FAIL on "$f" (for a bad reason)";;
     esac
 done
 echo
@@ -210,7 +210,7 @@ echo "Code behavior: $score_out/$max : $percent%";
 percent=`expr 100 \* $score_test / $max`;
 echo "Expected output: $score_test/$max : $percent%";}
 
-# partie 3i : tests d'exécution avec interprète
+# part 3i : execution tests with interpreter
 
 partie3i () {
 
@@ -237,11 +237,11 @@ for f in exec/*.py; do
 	    score_out=`expr $score_out + 1`;
 	else
 	    echo
-	    echo "ECHEC : mauvaise sortie pour $f"
+	    echo "FAIL : bad output for $f"
 	fi
     else
 	echo
-	echo "ECHEC de l'interprétation sur $f (devrait réussir)"
+	echo "FAIL to interpret $f (should succed)"
     fi
 done
 echo
@@ -254,7 +254,7 @@ for f in exec-fail/*.py; do
     max=`expr $max + 1`;
     if $compilo $f > out 2>&1; then
 	echo
-	echo "ECHEC : l'interprétation sur $f devrait échouer"
+	echo "FAIL : interpretation of $f should fail"
     else
 	score_test=`expr $score_test + 1`;
 	score_out=`expr $score_out + 1`;
