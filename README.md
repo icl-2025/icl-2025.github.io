@@ -54,4 +54,6 @@ to do so.
 | 7    | 22 Apr | Exercises on X86-64 Assembly |        |  [Lab 7](lab7/index) |
 | 8    | 29 Apr | Evaluation Strategies and Parameter Passing  | [Lecture 8](lecture8.pdf)         |      |
 | 8    | 29 Apr | Help with the project |        |   |
+| 9    | 6 May  | Compilation of Object-Oriented Languages  | [Lecture 9](lecture9.pdf)         |      |
+| 9    | 6 May  | Help with the project |        |   |
 | ---- | ------ | ------ | ------ | ---- |
