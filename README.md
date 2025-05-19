@@ -56,6 +56,8 @@ to do so.
 | 8    | 29 Apr | Help with the project |        |   |
 | 9    | 6 May  | Compilation of Object-Oriented Languages  | [Lecture 9](lecture9.pdf)         |      |
 | 9    | 6 May  | Help with the project |        |   |
-| 10   | 13 May  | Compilation of Functional Languages  | [Lecture 10](lecture10.pdf)         |      |
-| 10   | 13 May  | Help with the project |        |   |
+| 10   | 13 May | Compilation of Functional Languages  | [Lecture 10](lecture10.pdf)         |      |
+| 10   | 13 May | Help with the project |        |   |
+| 11   | 20 May | Optimizing compiler, part 1  | [Lecture 11](lecture11.pdf)         |      |
+| 11   | 20 May | Help with the project |        |   |
 | ---- | ------ | ------ | ------ | ---- |
