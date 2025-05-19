@@ -59,5 +59,5 @@ to do so.
 | 10   | 13 May | Compilation of Functional Languages  | [Lecture 10](lecture10.pdf)         |      |
 | 10   | 13 May | Help with the project |        |   |
 | 11   | 20 May | Optimizing compiler, part 1  | [Lecture 11](lecture11.pdf)         |      |
-| 11   | 20 May | Help with the project |        |   |
+| 11   | 20 May | Help with the project |        |   [Lab 11, support slides](lab11/support.pdf) |
 | ---- | ------ | ------ | ------ | ---- |
