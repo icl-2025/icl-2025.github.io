@@ -61,5 +61,5 @@ to do so.
 | 11   | 20 May | Optimizing compiler, part 1  | [Lecture 11](lecture11.pdf)         |      |
 | 11   | 20 May | Help with the project |        |   [Lab 11, support slides](lab11/support.pdf) |
 | 12   | 27 May | Optimizing compiler, part 2  | [Lecture 12](lecture12.pdf)         |      |
-| 12   | 27 May | Help with the project |        |    |
+| 12   | 27 May | Help with the project |        |   [Lab 12, support slides](lab12/support.pdf)    |
 | ---- | ------ | ------ | ------ | ---- |
